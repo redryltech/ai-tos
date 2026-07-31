@@ -1,0 +1,24 @@
+{{- if .Values.serviceMonitor.enabled }}
+{{- range $name, $svc := .Values.services }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ $name }}
+  namespace: {{ include "ai-tos.namespace" $ }}
+  labels:
+    app: {{ $name }}
+    app.kubernetes.io/part-of: ai-tos
+    {{- range $k, $v := $.Values.serviceMonitor.labels }}
+    {{ $k }}: {{ $v | quote }}
+    {{- end }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ $name }}
+  endpoints:
+    - port: http
+      path: {{ $.Values.serviceMonitor.path }}
+      interval: {{ $.Values.serviceMonitor.interval }}
+---
+{{- end }}
+{{- end }}

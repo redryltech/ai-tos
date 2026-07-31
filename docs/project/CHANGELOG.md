@@ -9,7 +9,51 @@ The format follows [Semantic Versioning](https://semver.org/) (`MAJOR.MINOR.PATC
 ## [Unreleased]
 
 ### Planned
-- Phase **0B.6** — Observability Platform (Prometheus, Grafana, Loki, Tempo, OpenTelemetry)
+- Phase **0B.8** — Resilience, DR & Runbooks
+
+---
+
+## [0.7.0] — 2026-07-31
+
+**Milestone:** CI/CD Production Gates (Phase **0B.7**).
+
+### Added
+- OIDC Terraform plan/apply gated by GitHub Environments (`staging`, `production`)
+- Blocking security gates: CodeQL, dependency audit, tfsec, Trivy config/image
+- Syft CycloneDX SBOM artifacts; Cosign keyless sign + attest on release images
+- `deploy-smoke.yml` + `scripts/smoke.sh` post-deploy health checks
+- `.github/environments.md` protection-rules / variables checklist
+
+### Validation
+- `pnpm build` ✅ · `pnpm typecheck` ✅ · `pnpm lint` ✅ · `bash -n scripts/smoke.sh` ✅
+
+---
+
+## [0.6.0] — 2026-07-31
+
+**Milestone:** Observability Platform (Phase **0B.6**).
+
+### Summary
+Delivers the AI-TOS observability stack: OpenTelemetry Collector, Prometheus, Grafana, Loki, Tempo, Alertmanager, AMP/IRSA Terraform, Helm OTEL wiring, and local Compose observability services.
+
+### Added
+- Kubernetes observability manifests (`infrastructure/kubernetes/observability/`)
+  - OpenTelemetry Collector (DaemonSet agent + Gateway)
+  - Prometheus + platform alert rules + Alertmanager
+  - Loki (structured logs) + Tempo (traces)
+  - Grafana datasources + platform-health dashboard-as-code
+  - Optional Prometheus Operator ServiceMonitor/PodMonitor patterns
+- Terraform module + environment: Amazon Managed Prometheus + IRSA for Prometheus, OTel Collector, Grafana
+- Helm: OTEL env baseline, per-service `OTEL_SERVICE_NAME`, optional ServiceMonitor template
+- `@ai-tos/config`: optional OTEL environment schema defaults
+- Docker Compose: otel-collector, prometheus, loki, tempo, grafana (port 3001)
+
+### Validation
+- `pnpm build` ✅
+- `pnpm typecheck` ✅
+- `pnpm lint` ✅
+- `terraform validate` ✅
+- `helm template` ✅
 
 ---
 
@@ -75,8 +119,9 @@ Delivers the production-grade AI-TOS engineering foundation and cloud platform s
 
 | Version | Phase gate | Notes |
 |---|---|---|
-| `v0.5.0` | Through **0B.5** | Current documented baseline |
-| `v0.6.0` | Through **0B.6** | Observability Platform (planned) |
+| `v0.5.0` | Through **0B.5** | Foundation baseline |
+| `v0.6.0` | Through **0B.6** | Observability Platform |
+| `v0.7.0` | Through **0B.7** | CI/CD Production Gates |
 | `v1.0.0` | Phase **8** GA | Production release target |
 
 ---

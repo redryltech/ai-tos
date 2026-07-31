@@ -19,6 +19,13 @@ config:
   CORS_ORIGIN: "https://ai-tos.example.com"
   NEXT_PUBLIC_API_URL: "https://api.ai-tos.example.com"
   AI_SERVICE_URL: "http://ai-service:8000"
+  # OpenTelemetry instrumentation baseline (Phase 0B.6 / ADR-0010)
+  OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector.observability.svc.cluster.local:4317"
+  OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+  OTEL_RESOURCE_ATTRIBUTES: "deployment.environment=dev,service.namespace=ai-tos"
+  OTEL_TRACES_EXPORTER: "otlp"
+  OTEL_METRICS_EXPORTER: "otlp"
+  OTEL_LOGS_EXPORTER: "otlp"
 
 # Deployable services. Secrets (DATABASE_URL, JWT_SECRET) come from External Secrets.
 services:
@@ -104,3 +111,11 @@ externalSecrets:
   keys:
     - { secretKey: DATABASE_URL, env: DATABASE_URL }
     - { secretKey: JWT_SECRET, env: JWT_SECRET }
+
+# Prometheus Operator ServiceMonitors (Phase 0B.6). Requires CRDs installed on cluster.
+serviceMonitor:
+  enabled: false
+  interval: 30s
+  path: /metrics
+  labels:
+    release: prometheus

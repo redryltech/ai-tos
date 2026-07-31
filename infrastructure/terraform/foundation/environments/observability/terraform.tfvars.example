@@ -1,0 +1,18 @@
+name   = "ai-tos"
+region = "us-east-1"
+
+# Populate from: terraform -chdir=../eks output
+oidc_provider_arn = "arn:aws:iam::123456789012:oidc-provider/oidc.eks.us-east-1.amazonaws.com/id/EXAMPLE"
+oidc_provider_url = "https://oidc.eks.us-east-1.amazonaws.com/id/EXAMPLE"
+
+# Optional CMK for AMP CloudWatch logs
+# kms_key_arn = "arn:aws:kms:us-east-1:123456789012:key/..."
+
+log_retention_days = 30
+
+tags = {
+  Project    = "ai-tos"
+  ManagedBy  = "terraform"
+  CostCenter = "ai-tos"
+  Phase      = "0B.6"
+}

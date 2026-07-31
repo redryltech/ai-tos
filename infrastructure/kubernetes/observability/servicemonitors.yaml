@@ -1,0 +1,60 @@
+# ServiceMonitor / PodMonitor patterns (Prometheus Operator CRDs).
+# Applied when kube-prometheus-stack / prometheus-operator is installed.
+# Until then, prometheus.yaml uses annotation-based kubernetes_sd scrape.
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: ai-tos-services
+  namespace: observability
+  labels:
+    release: prometheus
+spec:
+  namespaceSelector:
+    matchNames:
+      - applications
+      - ai-tos
+  selector:
+    matchLabels:
+      app.kubernetes.io/part-of: ai-tos
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 30s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: otel-collector
+  namespace: observability
+  labels:
+    release: prometheus
+spec:
+  namespaceSelector:
+    matchNames:
+      - observability
+  selector:
+    matchLabels:
+      app: otel-collector-gateway
+  endpoints:
+    - port: metrics
+      interval: 30s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: ai-tos-pods
+  namespace: observability
+  labels:
+    release: prometheus
+spec:
+  namespaceSelector:
+    matchNames:
+      - applications
+      - ai-tos
+  selector:
+    matchLabels:
+      app.kubernetes.io/part-of: ai-tos
+  podMetricsEndpoints:
+    - port: http
+      path: /metrics
+      interval: 30s

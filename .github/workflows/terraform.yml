@@ -1,5 +1,6 @@
 name: Terraform
 
+# Phase 0B.7 — OIDC plan/apply gated by GitHub Environments (ADR-0011)
 on:
   pull_request:
     paths:
@@ -8,16 +9,29 @@ on:
     branches: [main]
     paths:
       - "infrastructure/terraform/**"
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Target environment (staging|production)
+        required: true
+        default: staging
+        type: choice
+        options: [staging, production]
 
 permissions:
   contents: read
-  id-token: write        # OIDC to AWS (no static keys) — ADR-0011
-  pull-requests: write   # post plan comment
+  id-token: write
+  pull-requests: write
 
 jobs:
   plan:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: [staging, production]
+    environment: ${{ matrix.environment }}
     defaults:
       run:
         working-directory: infrastructure/terraform
@@ -37,7 +51,8 @@ jobs:
         run: |
           terraform init -reconfigure \
             -backend-config="bucket=${{ vars.TF_STATE_BUCKET }}" \
-            -backend-config="region=${{ vars.AWS_REGION }}"
+            -backend-config="region=${{ vars.AWS_REGION }}" \
+            -backend-config="key=ai-tos/${{ matrix.environment }}/terraform.tfstate"
 
       - name: Format check
         run: terraform fmt -check -recursive
@@ -46,48 +61,81 @@ jobs:
         run: terraform validate
 
       - name: Plan
-        id: plan
-        run: terraform plan -no-color -out=tfplan
+        run: terraform plan -no-color -out=tfplan -var="environment=${{ matrix.environment }}"
+
+      - name: Upload plan artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan-${{ matrix.environment }}-${{ github.sha }}
+          path: infrastructure/terraform/tfplan
 
       - name: Post plan comment
+        if: matrix.environment == 'staging'
         uses: actions/github-script@v7
         with:
           script: |
-            const fs = require('fs');
-            const plan = fs.readFileSync('infrastructure/terraform/tfplan', 'utf8').toString('base64');
-            // Post a short marker; full plan attached as artifact in real runs.
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: '#### Terraform Plan\nPlan generated for `' + context.sha + '`. Review the workflow logs for details.'
+              body: '#### Terraform Plan\nPlans generated for `staging` + `production` @ `' + context.sha + '`. Review workflow logs / artifacts. Apply requires Environment approval.'
             });
 
-  apply:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+  apply-staging:
+    if: |
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_dispatch' && inputs.environment == 'staging')
     environment:
-      name: production          # required reviewers + protection rules gate this
+      name: staging
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: infrastructure/terraform
     steps:
       - uses: actions/checkout@v4
-
       - uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ vars.AWS_REGION }}
-
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.7.5
-
-      - name: Init (remote state, OIDC)
+      - name: Init
         run: |
           terraform init -reconfigure \
             -backend-config="bucket=${{ vars.TF_STATE_BUCKET }}" \
-            -backend-config="region=${{ vars.AWS_REGION }}"
+            -backend-config="region=${{ vars.AWS_REGION }}" \
+            -backend-config="key=ai-tos/staging/terraform.tfstate"
+      - name: Apply (staging, gated)
+        run: terraform apply -auto-approve -var="environment=staging"
 
-      - name: Apply (gated)
-        run: terraform apply -auto-approve
+  apply-production:
+    needs: [apply-staging]
+    if: |
+      always() && (
+        (github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.apply-staging.result == 'success') ||
+        (github.event_name == 'workflow_dispatch' && inputs.environment == 'production')
+      )
+    environment:
+      name: production
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infrastructure/terraform
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.7.5
+      - name: Init
+        run: |
+          terraform init -reconfigure \
+            -backend-config="bucket=${{ vars.TF_STATE_BUCKET }}" \
+            -backend-config="region=${{ vars.AWS_REGION }}" \
+            -backend-config="key=ai-tos/production/terraform.tfstate"
+      - name: Apply (production, gated)
+        run: terraform apply -auto-approve -var="environment=production"

@@ -1,0 +1,61 @@
+name: Deploy Smoke
+
+# Phase 0B.7 — post-deploy health/smoke gates (ADR-0011 / ADR-0012)
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Target environment
+        required: true
+        default: staging
+        type: choice
+        options: [staging, production]
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+  push:
+    branches: [main]
+    paths:
+      - "scripts/smoke.sh"
+      - ".github/workflows/deploy-smoke.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  smoke-staging:
+    if: |
+      github.event_name == 'push' ||
+      (github.event_name == 'workflow_dispatch' && inputs.environment == 'staging') ||
+      (github.event_name == 'workflow_call' && inputs.environment == 'staging')
+    environment:
+      name: staging
+      url: ${{ vars.SMOKE_BASE_URL }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Smoke (staging)
+        env:
+          SMOKE_BASE_URL: ${{ vars.SMOKE_BASE_URL }}
+          SMOKE_API_URL: ${{ vars.SMOKE_API_URL }}
+          SMOKE_AI_URL: ${{ vars.SMOKE_AI_URL }}
+        run: bash scripts/smoke.sh
+
+  smoke-production:
+    if: |
+      (github.event_name == 'workflow_dispatch' && inputs.environment == 'production') ||
+      (github.event_name == 'workflow_call' && inputs.environment == 'production')
+    environment:
+      name: production
+      url: ${{ vars.SMOKE_BASE_URL }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Smoke (production)
+        env:
+          SMOKE_BASE_URL: ${{ vars.SMOKE_BASE_URL }}
+          SMOKE_API_URL: ${{ vars.SMOKE_API_URL }}
+          SMOKE_AI_URL: ${{ vars.SMOKE_AI_URL }}
+        run: bash scripts/smoke.sh

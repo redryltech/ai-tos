@@ -36,15 +36,16 @@ foundation/
 │   ├── redis-cache/      # volatile cache tier, LRU, no persistence (Phase 0B.3)
 │   ├── redis-state/      # durable state tier, AOF, noeviction (Phase 0B.3)
 │   ├── msk/              # Amazon MSK (Kafka 3.6, Multi-AZ, IAM+SCRAM, KMS, TLS) (Phase 0B.4)
-│   └── kafka-topics/     # topic surface as code via Kafka provider (Phase 0B.4)
+│   ├── kafka-topics/     # topic surface as code via Kafka provider (Phase 0B.4)
+│   └── observability/    # AMP + IRSA for Prometheus/OTel/Grafana (Phase 0B.6)
 ├── environments/
 │   ├── shared-services/  # is_aggregator=true, is_log_archive=true
 │   ├── dev/  staging/  prod/  # members (central logging to Shared Services)
 │   ├── eks/              # Phase 0B.2: VPC + EKS platform (self-contained example)
 │   ├── data/             # Phase 0B.3: VPC + KMS + RDS + Redis cache/state (self-contained example)
-│   └── event/            # Phase 0B.4: VPC + KMS + MSK + topics (self-contained example)
+│   ├── event/            # Phase 0B.4: VPC + KMS + MSK + topics (self-contained example)
+│   └── observability/    # Phase 0B.6: AMP workspace + observability IRSA
 └── docs/                 # cidr.md, network-diagram.md, architecture.md, eks-architecture.md, data-platform.md, event-platform.md
-└── docs/                 # cidr.md, network-diagram.md, architecture.md
 ```
 
 ## Apply order

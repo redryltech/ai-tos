@@ -1,0 +1,177 @@
+# Prometheus + scrape config (in-cluster). Remote-write to AMP via Terraform IRSA when configured.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: observability
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 30s
+      evaluation_interval: 30s
+      external_labels:
+        cluster: ai-tos
+        env: platform
+    alerting:
+      alertmanagers:
+        - static_configs:
+            - targets: ["alertmanager.observability.svc.cluster.local:9093"]
+    rule_files:
+      - /etc/prometheus/rules/*.yml
+    scrape_configs:
+      - job_name: prometheus
+        static_configs:
+          - targets: ["localhost:9090"]
+      - job_name: otel-collector
+        static_configs:
+          - targets: ["otel-collector.observability.svc.cluster.local:8888"]
+      - job_name: kubernetes-pods
+        kubernetes_sd_configs:
+          - role: pod
+            namespaces:
+              names: [applications, ai-tos, observability]
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            action: keep
+            regex: "true"
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+            action: replace
+            target_label: __metrics_path__
+            regex: (.+)
+          - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+            action: replace
+            regex: ([^:]+)(?::\d+)?;(\d+)
+            replacement: $1:$2
+            target_label: __address__
+  # remote_write (AMP) is injected via optional secret/env in overlays:
+  # remote_write:
+  #   - url: <AMP_REMOTE_WRITE_URL>
+  #     sigv4: { region: us-east-1 }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-rules
+  namespace: observability
+data:
+  platform.yml: |
+    groups:
+      - name: ai-tos-platform
+        rules:
+          - alert: HighErrorRate
+            expr: sum(rate(http_server_request_duration_seconds_count{status=~"5.."}[5m])) by (service)
+              / sum(rate(http_server_request_duration_seconds_count[5m])) by (service) > 0.05
+            for: 10m
+            labels: { severity: critical }
+            annotations:
+              summary: "High HTTP 5xx rate on {{ $labels.service }}"
+          - alert: HighP99Latency
+            expr: histogram_quantile(0.99, sum(rate(http_server_request_duration_seconds_bucket[5m])) by (le, service)) > 2
+            for: 15m
+            labels: { severity: warning }
+            annotations:
+              summary: "p99 latency > 2s on {{ $labels.service }}"
+          - alert: PodRestarting
+            expr: increase(kube_pod_container_status_restarts_total[15m]) > 3
+            for: 5m
+            labels: { severity: warning }
+            annotations:
+              summary: "Pod {{ $labels.namespace }}/{{ $labels.pod }} restarting"
+          - alert: KafkaDLQDepth
+            expr: kafka_consumergroup_lag{topic=~".*\\.dlq"} > 100
+            for: 10m
+            labels: { severity: critical }
+            annotations:
+              summary: "DLQ depth high on {{ $labels.topic }}"
+          - alert: PostgresDown
+            expr: up{job="postgres"} == 0
+            for: 5m
+            labels: { severity: critical }
+            annotations:
+              summary: "PostgreSQL target down"
+          - alert: RedisDown
+            expr: up{job=~"redis-.*"} == 0
+            for: 5m
+            labels: { severity: critical }
+            annotations:
+              summary: "Redis target {{ $labels.job }} down"
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: prometheus
+  namespace: observability
+  annotations:
+    eks.amazonaws.com/role-arn: <PROMETHEUS_ROLE_ARN>
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+  namespace: observability
+  labels:
+    app: prometheus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      serviceAccountName: prometheus
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+      containers:
+        - name: prometheus
+          image: prom/prometheus:v2.51.2
+          args:
+            - --config.file=/etc/prometheus/prometheus.yml
+            - --storage.tsdb.path=/prometheus
+            - --storage.tsdb.retention.time=15d
+            - --web.enable-lifecycle
+            - --web.enable-remote-write-receiver
+          ports:
+            - name: http
+              containerPort: 9090
+          volumeMounts:
+            - name: config
+              mountPath: /etc/prometheus/prometheus.yml
+              subPath: prometheus.yml
+            - name: rules
+              mountPath: /etc/prometheus/rules
+            - name: data
+              mountPath: /prometheus
+          resources:
+            requests: { cpu: 100m, memory: 512Mi }
+            limits: { cpu: "1", memory: 2Gi }
+          readinessProbe:
+            httpGet: { path: /-/ready, port: 9090 }
+            initialDelaySeconds: 10
+      volumes:
+        - name: config
+          configMap:
+            name: prometheus-config
+        - name: rules
+          configMap:
+            name: prometheus-rules
+        - name: data
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+  namespace: observability
+  labels:
+    app: prometheus
+spec:
+  selector:
+    app: prometheus
+  ports:
+    - name: http
+      port: 9090
+      targetPort: 9090

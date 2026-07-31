@@ -31,6 +31,9 @@ spec:
             - secretRef:
                 name: ai-tos-secrets
           {{- end }}
+          env:
+            - name: OTEL_SERVICE_NAME
+              value: {{ $name | quote }}
           readinessProbe:
             httpGet:
               path: {{ $svc.healthPath }}

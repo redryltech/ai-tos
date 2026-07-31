@@ -53,6 +53,24 @@ jobs:
             docker push $ECR/ai-tos/$svc:${GITHUB_SHA::8}
           done
 
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3
+
+      - name: Install Syft
+        uses: anchore/sbom-action/download-syft@v0
+
+      - name: Cosign keyless sign images + SBOM attest
+        env:
+          ECR: ${{ vars.ECR_REGISTRY }}
+          COSIGN_YES: "true"
+        run: |
+          for svc in api web ai-service market-worker risk-worker news-worker scheduler; do
+            IMG=$ECR/ai-tos/$svc:${GITHUB_SHA::8}
+            cosign sign --yes "$IMG"
+            syft "$IMG" -o cyclonedx-json > "sbom-$svc.cdx.json"
+            cosign attest --yes --predicate "sbom-$svc.cdx.json" --type cyclonedx "$IMG"
+          done
+
       - name: Semantic Release
         uses: cycjimmy/semantic-release-action@v4
         env:

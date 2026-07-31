@@ -18,6 +18,15 @@ const envSchema = z.object({
   CORS_ORIGIN: z.string().default('http://localhost:3000'),
 
   AI_SERVICE_URL: z.string().url().default('http://localhost:8000'),
+
+  // OpenTelemetry instrumentation baseline (Phase 0B.6) — optional; defaults keep local/dev working.
+  OTEL_EXPORTER_OTLP_ENDPOINT: z.string().default('http://localhost:4317'),
+  OTEL_EXPORTER_OTLP_PROTOCOL: z.enum(['grpc', 'http/protobuf', 'http/json']).default('grpc'),
+  OTEL_SERVICE_NAME: z.string().default('ai-tos'),
+  OTEL_RESOURCE_ATTRIBUTES: z.string().default('deployment.environment=development'),
+  OTEL_TRACES_EXPORTER: z.string().default('otlp'),
+  OTEL_METRICS_EXPORTER: z.string().default('otlp'),
+  OTEL_LOGS_EXPORTER: z.string().default('otlp'),
 });
 
 export type AppConfig = z.infer<typeof envSchema>;
