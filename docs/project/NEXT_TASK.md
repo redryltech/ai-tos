@@ -6,32 +6,34 @@
 
 ## Current Phase
 
-**0B.8 — Resilience, DR & Runbooks**
+**1 — Identity, Auth & Core Services**
 
 | Field | Value |
 |---|---|
 | Status | ⬜ Not started |
-| Depends on | ✅ 0A–0B.7 |
-| Version target | `v0.8.0` |
-| Stop policy | **Stop after Phase 0B.8** |
+| Depends on | ✅ Phase 0 (0A–0B.8) |
+| Version target | `v1.0.0-phase1` / per roadmap |
+| Stop policy | **Stop after Phase 1** — do not start Phase 2 |
 
 ---
 
 ## Objective
 
-Deliver RPO/RTO runbooks, Multi-AZ failure drills (staging), backup restore verification, on-call alert routing + severity taxonomy, and Phase 0 platform exit criteria sign-off.
+Wire real identity and deploy core control-plane services: IdP/OIDC, user store + sessions, RBAC, authenticated API/Web to EKS, audit persistence, Outbox foundation, contract + integration tests.
 
 ---
 
-## Deliverables
+## Deliverables (roadmap)
 
-| # | Deliverable |
+| # | Item |
 |---|---|
-| 1 | RPO/RTO runbooks (RDS PITR, Redis, MSK, state CRR) |
-| 2 | Multi-AZ failure drills (staging) |
-| 3 | Backup restore verification |
-| 4 | On-call alert routing + severity taxonomy |
-| 5 | Phase 0 platform exit criteria signed off |
+| 1 | Entra ID / OIDC identity provider integration |
+| 2 | User store + session model (`redis-state`) |
+| 3 | RBAC end-to-end |
+| 4 | API + Web authenticated deploy (dev → staging) |
+| 5 | Audit log persistence (PostgreSQL) |
+| 6 | Outbox relay foundation |
+| 7 | Contract + integration tests |
 
 ---
 
@@ -45,26 +47,18 @@ pnpm lint
 
 ---
 
-## Out of Scope
+## Prior Phase (0B.8) — Complete
 
-- Phase **1+** identity / market / AI / risk / execution
-- Redesign of completed 0A–0B.7 modules
-
----
-
-## Prior Phase (0B.7) — Complete
-
-- [x] OIDC Terraform gates (staging/production Environments)
-- [x] SBOM + Cosign signing
-- [x] Security scan gates (SAST/deps/IaC/image)
-- [x] Protected Environments docs
-- [x] Post-deploy smoke tests
-- [x] Docs updated
-- [x] **STOPPED** after 0B.7
+- [x] RPO/RTO runbooks
+- [x] Multi-AZ failure drills (staging)
+- [x] Backup restore verification
+- [x] On-call alert routing + severity taxonomy
+- [x] Phase 0 platform exit criteria
+- [x] **STOPPED** after 0B.8
 
 ---
 
 ## References
 
-- ADR-0011, ADR-0012
+- [`ROADMAP.md`](./ROADMAP.md)
 - [`PROJECT_STATUS.md`](./PROJECT_STATUS.md)

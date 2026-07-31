@@ -9,7 +9,23 @@ The format follows [Semantic Versioning](https://semver.org/) (`MAJOR.MINOR.PATC
 ## [Unreleased]
 
 ### Planned
-- Phase **0B.8** — Resilience, DR & Runbooks
+- Phase **1** — Identity, Auth & Core Services
+
+---
+
+## [0.8.0] — 2026-07-31
+
+**Milestone:** Resilience, DR & Runbooks (Phase **0B.8**).
+
+### Added
+- `docs/runbooks/rpo-rto.md` — RDS/Redis/MSK/state CRR targets + procedures
+- `docs/runbooks/multi-az-failure-drill.md` — staging AZ/RDS/MSK drills
+- `docs/runbooks/backup-restore.md` — restore verification cadence
+- `docs/runbooks/on-call-alerting.md` — severity taxonomy + routing
+- `docs/runbooks/phase-0-exit-criteria.md` — Phase 0 sign-off checklist
+
+### Validation
+- `pnpm build` ✅ · `pnpm typecheck` ✅ · `pnpm lint` ✅
 
 ---
 
@@ -122,6 +138,7 @@ Delivers the production-grade AI-TOS engineering foundation and cloud platform s
 | `v0.5.0` | Through **0B.5** | Foundation baseline |
 | `v0.6.0` | Through **0B.6** | Observability Platform |
 | `v0.7.0` | Through **0B.7** | CI/CD Production Gates |
+| `v0.8.0` | Through **0B.8** | Resilience, DR & Runbooks |
 | `v1.0.0` | Phase **8** GA | Production release target |
 
 ---

@@ -10,16 +10,16 @@ Living status snapshot. Update this file at the end of every completed phase.
 |---|---|
 | **Project Name** | AI-TOS (AI Trading Operating System) |
 | **Repository URL** | https://github.com/redryltech/ai-tos.git |
-| **Current Version** | `v0.7.0` |
+| **Current Version** | `v0.8.0` |
 | **Current Branch** | `main` |
-| **Current Phase** | **0B.7 — CI/CD Production Gates** ✅ Complete |
-| **Completed Phases** | `0A`, `0B.1`, `0B.2`, `0B.3`, `0B.4`, `0B.5`, `0B.6`, `0B.7` |
-| **Current Sprint** | Ready for Phase 0B.8 (Resilience, DR & Runbooks) |
-| **Build Status** | Green (`pnpm build` · `pnpm typecheck` · `pnpm lint`) |
-| **Last Successful Validation** | Phase 0B.7 — `pnpm build` · `pnpm typecheck` · `pnpm lint` · `bash -n scripts/smoke.sh` |
-| **Last Commit** | _(pending)_ Phase 0B.7 CI/CD Production Gates |
-| **Last Git Tag** | _None yet_ (document baseline `v0.7.0`) |
-| **Next Phase** | **0B.8** — Resilience, DR & Runbooks |
+| **Current Phase** | **0B.8 — Resilience, DR & Runbooks** ✅ Complete |
+| **Completed Phases** | `0A`, `0B.1`–`0B.8` |
+| **Current Sprint** | Ready for Phase 1 (Identity, Auth & Core Services) |
+| **Build Status** | Green |
+| **Last Successful Validation** | Phase 0B.8 — `pnpm build` · `typecheck` · `lint` |
+| **Last Commit** | _(pending)_ Phase 0B.8 |
+| **Last Git Tag** | _None yet_ (document baseline `v0.8.0`) |
+| **Next Phase** | **1** — Identity, Auth & Core Services |
 
 ---
 
@@ -28,18 +28,13 @@ Living status snapshot. Update this file at the end of every completed phase.
 | Phase | Name | Status |
 |---|---|---|
 | 0A | Engineering Foundation | ✅ Complete |
-| 0B.1 | AWS Cloud Foundation | ✅ Complete |
-| 0B.2 | EKS Kubernetes Platform | ✅ Complete |
-| 0B.3 | Data Platform | ✅ Complete |
-| 0B.4 | Event Platform | ✅ Complete |
-| 0B.5 | Secrets & Delivery Platform | ✅ Complete |
-| 0B.6 | Observability Platform | ✅ Complete |
-| 0B.7 | CI/CD Production Gates | ✅ Complete |
-| 0B.8+ | Remaining platform → production | ⬜ Not started |
+| 0B.1–0B.7 | Cloud → CI/CD gates | ✅ Complete |
+| 0B.8 | Resilience, DR & Runbooks | ✅ Complete |
+| 1+ | Product phases | ⬜ Not started |
 
 ---
 
 ## Notes
 
-- Phase 0 remains **foundation-only**.
+- Phase 0 platform exit criteria: `docs/runbooks/phase-0-exit-criteria.md`
 - Next: [`NEXT_TASK.md`](./NEXT_TASK.md)
