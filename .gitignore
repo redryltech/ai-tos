@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+.next/
+.turbo/
+out/
+*.tsbuildinfo
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Go
+/bin/
+*.test
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# Editor / OS
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+.DS_Store
+.idea/
+
+# Terraform
+**/.terraform/
+**/*.tfstate
+**/*.tfstate.*
+*.tfplan
+*.tfvars
+*.tfvars.json
+crash.log
+# (infrastructure/terraform/bootstrap uses LOCAL state on purpose; do not commit its state)
+
+# Misc
+coverage/
+*.log
+
+# Terraform lock (regenerate per env)
+**/.terraform.lock.hcl

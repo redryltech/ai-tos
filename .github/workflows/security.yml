@@ -1,0 +1,88 @@
+name: Security
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "27 4 * * 1"   # weekly
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  sast:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: CodeQL (SAST)
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript, python, go
+      - name: CodeQL analyze
+        uses: github/codeql-action/analyze@v3
+
+  deps:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 9 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - name: npm audit
+        run: pnpm audit --audit-level=high || true
+      - name: Python deps (pip-audit)
+        run: |
+          python3 -m pip install --quiet pip-audit
+          (cd apps/ai-service && pip-audit -r requirements.txt || true)
+      - name: Go vulncheck
+        run: |
+          for d in apps/*/; do
+            if [ -f "$d/go.mod" ]; then (cd "$d" && go run golang.org/x/vuln/cmd/govulncheck@latest ./... || true); fi
+          done
+
+  iac:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: tfsec (Terraform)
+        uses: aquasecurity/tfsec-action@v1
+        with:
+          working_directory: infrastructure/terraform
+      - name: Trivy config (IaC + manifests)
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          scan-type: config
+          scan-ref: infrastructure
+          severity: HIGH,CRITICAL
+
+  images:
+    runs-on: ubuntu-latest
+    needs: [sast]
+    strategy:
+      matrix:
+        image: [api, web, ai-service, market-worker, risk-worker, news-worker, scheduler]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image (scan target)
+        run: |
+          case "${{ matrix.image }}" in
+            market-worker|risk-worker|news-worker|scheduler)
+              docker build -f infrastructure/docker/Dockerfile.go --build-arg WORKER=${{ matrix.image }} -t ai-tos/${{ matrix.image }}:ci . ;;
+            *)
+              docker build -f infrastructure/docker/Dockerfile.${{ matrix.image }} -t ai-tos/${{ matrix.image }}:ci . ;;
+          esac
+      - name: Trivy image scan
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          image-ref: ai-tos/${{ matrix.image }}:ci
+          severity: HIGH,CRITICAL
+          exit-code: "1"
+      - name: Syft SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          image: ai-tos/${{ matrix.image }}:ci
+          output-file: sbom-${{ matrix.image }}.spdx.json

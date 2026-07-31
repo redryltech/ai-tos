@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: market-worker
+  namespace: ai-tos
+  labels:
+    app: market-worker
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: market-worker
+  template:
+    metadata:
+      labels:
+        app: market-worker
+    spec:
+      containers:
+        - name: market-worker
+          image: ai-tos/market-worker:latest
+          ports:
+            - containerPort: 4100
+          envFrom:
+            - configMapRef:
+                name: ai-tos-config
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 4100
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 4100
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "64Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: market-worker
+  namespace: ai-tos
+spec:
+  selector:
+    app: market-worker
+  ports:
+    - port: 4100
+      targetPort: 4100

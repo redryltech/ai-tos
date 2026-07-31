@@ -1,0 +1,48 @@
+# Kubernetes storage foundation (Phase 0B.2) — EBS CSI-backed StorageClasses.
+# The EBS CSI driver is an EKS managed add-on; these StorageClasses consume it.
+# No databases are provisioned — this only prepares the storage API.
+
+# gp3 — general purpose, default.
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: gp3
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
+provisioner: ebs.csi.aws.com
+parameters:
+  type: gp3
+  encrypted: "true"
+  fsType: ext4
+reclaimPolicy: Delete
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
+---
+# io2 Block Express — high-performance, low-latency (trading/stateful workloads later).
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: io2-block-express
+provisioner: ebs.csi.aws.com
+parameters:
+  type: io2
+  iops: "4000"
+  encrypted: "true"
+  fsType: ext4
+reclaimPolicy: Retain
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
+---
+# sc1 — cold/infrequent (future backups, archives).
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: sc1-cold
+provisioner: ebs.csi.aws.com
+parameters:
+  type: sc1
+  encrypted: "true"
+  fsType: ext4
+reclaimPolicy: Retain
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true

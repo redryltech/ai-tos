@@ -1,0 +1,18 @@
+# Phase 0B.4 — Event platform (self-contained example). Apply in the target account.
+name                    = "ai-tos-prod"
+environment             = "prod"
+region                  = "us-east-1"
+dr_region               = "us-west-2"
+vpc_cidr                = "10.30.0.0/16"
+public_subnets          = ["10.30.0.0/20", "10.30.16.0/20", "10.30.32.0/20"]
+private_subnets         = ["10.30.64.0/20", "10.30.80.0/20", "10.30.96.0/20"]
+database_subnet_ids     = ["10.30.128.0/20", "10.30.144.0/20", "10.30.160.0/20"]
+one_nat_gateway_per_az  = true
+single_nat_gateway      = false
+kafka_version           = "3.6.0"
+broker_count            = 3
+broker_instance_type    = "kafka.m5.large"
+broker_volume_size      = 1000
+scram_username          = "ai-tos-admin"
+scram_password          = "REPLACE_WITH_SCRAM_SECRET_VALUE"
+# topics left at module defaults (market/portfolio/risk/audit/notification/system + dlq/retry)

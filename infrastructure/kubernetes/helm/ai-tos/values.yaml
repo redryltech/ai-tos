@@ -1,0 +1,106 @@
+# AI-TOS Helm values (ADR-0007). Environment differences live in Kustomize overlays.
+global:
+  namespace: ai-tos
+  env: dev
+
+image:
+  registry: "123456789012.dkr.ecr.us-east-1.amazonaws.com"  # override per env
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+# Non-secret configuration -> ConfigMap.
+config:
+  NODE_ENV: "production"
+  LOG_LEVEL: "info"
+  REDIS_CACHE_URL: "redis://ai-tos-cache:6379"
+  REDIS_STATE_URL: "redis://ai-tos-state:6379"
+  KAFKA_BROKERS: "b-1.ai-tos-kafka:9092,b-2.ai-tos-kafka:9092,b-3.ai-tos-kafka:9092"
+  SCHEMA_REGISTRY_URL: "https://ai-tos-schema-registry:8081"
+  CORS_ORIGIN: "https://ai-tos.example.com"
+  NEXT_PUBLIC_API_URL: "https://api.ai-tos.example.com"
+  AI_SERVICE_URL: "http://ai-service:8000"
+
+# Deployable services. Secrets (DATABASE_URL, JWT_SECRET) come from External Secrets.
+services:
+  web:
+    image: ai-tos/web
+    port: 3000
+    replicas: 2
+    healthPath: /
+    resources:
+      requests: { cpu: "100m", memory: "128Mi" }
+      limits:   { cpu: "500m", memory: "512Mi" }
+  api:
+    image: ai-tos/api
+    port: 4000
+    replicas: 2
+    healthPath: /api/health
+    resources:
+      requests: { cpu: "100m", memory: "128Mi" }
+      limits:   { cpu: "500m", memory: "512Mi" }
+  ai-service:
+    image: ai-tos/ai-service
+    port: 8000
+    replicas: 2
+    healthPath: /health
+    resources:
+      requests: { cpu: "100m", memory: "128Mi" }
+      limits:   { cpu: "500m", memory: "512Mi" }
+  market-worker:
+    image: ai-tos/market-worker
+    port: 4100
+    replicas: 2
+    healthPath: /health
+    resources:
+      requests: { cpu: "50m", memory: "64Mi" }
+      limits:   { cpu: "250m", memory: "256Mi" }
+  risk-worker:
+    image: ai-tos/risk-worker
+    port: 4200
+    replicas: 2
+    healthPath: /health
+    resources:
+      requests: { cpu: "50m", memory: "64Mi" }
+      limits:   { cpu: "250m", memory: "256Mi" }
+  news-worker:
+    image: ai-tos/news-worker
+    port: 4300
+    replicas: 2
+    healthPath: /health
+    resources:
+      requests: { cpu: "50m", memory: "64Mi" }
+      limits:   { cpu: "250m", memory: "256Mi" }
+  scheduler:
+    image: ai-tos/scheduler
+    port: 4400
+    replicas: 1
+    healthPath: /health
+    resources:
+      requests: { cpu: "50m", memory: "64Mi" }
+      limits:   { cpu: "250m", memory: "256Mi" }
+
+ingress:
+  enabled: true
+  className: nginx
+  host: ai-tos.example.com
+  rules:
+    - { path: /api, service: api, port: 4000 }
+    - { path: /docs, service: api, port: 4000 }
+    - { path: /ai, service: ai-service, port: 8000 }
+    - { path: /, service: web, port: 3000 }
+
+hpa:
+  enabled: true
+  maxReplicas: 10
+  cpuUtilization: 70
+  targets: [api, web, ai-service]
+
+# Secrets synced from AWS Secrets Manager via External Secrets Operator (ADR-0009).
+externalSecrets:
+  enabled: true
+  refreshInterval: 1m
+  secretStore: aws-secrets-manager   # ClusterSecretStore installed by the overlay add-ons
+  secretName: ai-tos/app             # Secrets Manager secret name (per env via store IAM)
+  keys:
+    - { secretKey: DATABASE_URL, env: DATABASE_URL }
+    - { secretKey: JWT_SECRET, env: JWT_SECRET }

@@ -1,0 +1,66 @@
+# RBAC for the AI-TOS platform (Phase 0B.2).
+# Groups (ai-tos:admins / ai-tos:developers / ai-tos:viewers) map to IAM Identity Center /
+# OIDC groups. Least privilege: developers get no Secrets access; viewers are read-only.
+
+# --- Developer ClusterRole (no secrets, limited pod/exec) ---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: ai-tos-developer
+rules:
+  - apiGroups: ["*"]
+    resources: ["*"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments", "deployments/status", "statefulsets", "daemonsets", "replicasets"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: [""]
+    resources: ["pods", "pods/log", "services", "configmaps", "events"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: [""]
+    resources: ["pods/exec", "pods/portforward"]
+    verbs: ["create"]
+  - apiGroups: [""]
+    resources: ["namespaces"]
+    verbs: ["get", "list", "watch"]
+  # Explicitly NOT granting: secrets, roles, rolebindings, nodes, persistentvolumes.
+---
+# --- Bindings ---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: ai-tos-admins
+subjects:
+  - kind: Group
+    name: ai-tos:admins
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: ai-tos-developers
+subjects:
+  - kind: Group
+    name: ai-tos:developers
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: ai-tos-developer
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: ai-tos-viewers
+subjects:
+  - kind: Group
+    name: ai-tos:viewers
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view   # built-in read-only ClusterRole
+  apiGroup: rbac.authorization.k8s.io

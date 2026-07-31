@@ -1,0 +1,26 @@
+# Default owners for everything in the repo
+* @ai-tos/founders
+
+# Apps
+/apps/web/          @ai-tos/frontend
+/apps/api/          @ai-tos/backend
+/apps/ai-service/   @ai-tos/ai
+/apps/market-worker/ @ai-tos/platform
+/apps/risk-worker/   @ai-tos/platform
+/apps/news-worker/   @ai-tos/platform
+/apps/scheduler/     @ai-tos/platform
+
+# Packages
+/packages/shared/   @ai-tos/platform
+/packages/ui/       @ai-tos/frontend
+/packages/config/   @ai-tos/platform
+/packages/sdk/      @ai-tos/backend
+/packages/database/ @ai-tos/backend
+
+# Infrastructure & CI
+/infrastructure/    @ai-tos/devops
+/.github/           @ai-tos/devops
+
+# Docs & ADRs
+/docs/              @ai-tos/founders
+/docs/adrs/         @ai-tos/founders

@@ -1,0 +1,89 @@
+# AWS Load Balancer Controller — ingress foundation (Phase 0B.2).
+# Provides ALB/NLB provisioning for future Ingress resources. NO applications are exposed here.
+#
+# BEFORE APPLY: set the IRSA role ARN (from `terraform output aws_load_balancer_controller_role_arn`)
+# in the ServiceAccount annotation, and the --aws-region / --cluster-name flags.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: aws-load-balancer-controller
+  namespace: kube-system
+  annotations:
+    # Replace with: arn:aws:iam::<ACCOUNT_ID>:role/ai-tos-<env>-aws-load-balancer-controller
+    eks.amazonaws.com/role-arn: "<AWS_LOAD_BALANCER_CONTROLLER_ROLE_ARN>"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: aws-load-balancer-controller
+rules:
+  - apiGroups: ["", "extensions"]
+    resources: ["configmaps", "events", "ingresses", "ingresses/status", "services", "pods", "nodes", "endpoints"]
+    verbs: ["create", "get", "list", "update", "watch", "patch", "delete"]
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["ingressclasses", "ingresses"]
+    verbs: ["get", "list", "watch", "update", "patch"]
+  - apiGroups: ["elbv2.k8s.aws"]
+    resources: ["targetgroups", "targetgroups/status", "loadbalancers", "loadbalancers/status"]
+    verbs: ["create", "get", "list", "update", "watch", "patch", "delete"]
+  - apiGroups: ["iam.services.k8s.aws"]
+    resources: ["iamserviceaccounts"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["acm.services.k8s.aws", "elasticloadbalancing.services.k8s.aws"]
+    resources: ["*"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["wafregional.waf.services.k8s.aws", "wafv2.waf.services.k8s.aws", "shield.services.k8s.aws"]
+    resources: ["*"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: aws-load-balancer-controller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: aws-load-balancer-controller
+subjects:
+  - kind: ServiceAccount
+    name: aws-load-balancer-controller
+    namespace: kube-system
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aws-load-balancer-controller
+  namespace: kube-system
+  labels:
+    app.kubernetes.io/name: aws-load-balancer-controller
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: aws-load-balancer-controller
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: aws-load-balancer-controller
+    spec:
+      serviceAccountName: aws-load-balancer-controller
+      securityContext:
+        runAsNonRoot: true
+      containers:
+        - name: controller
+          image: public.ecr.aws/eks/aws-load-balancer-controller:v2.7.2
+          args:
+            - --cluster-name=<CLUSTER_NAME>
+            - --ingress-class=alb
+            - --aws-region=<AWS_REGION>
+            - --feature-gates=IPv6DualStack=false
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi

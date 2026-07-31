@@ -1,0 +1,23 @@
+# Phase 0B.1 — Production account. Apply from the PROD account (protected, required reviewers).
+name                    = "ai-tos-prod"
+environment             = "prod"
+region                  = "us-east-1"
+dr_region               = "us-west-2"
+account_id              = "REPLACE_WITH_PROD_ACCOUNT_ID"
+shared_services_account_id = "REPLACE_WITH_SHARED_SERVICES_ACCOUNT_ID"
+is_aggregator           = false
+is_log_archive          = false
+create_cloudtrail       = false
+access_analyzer_type    = "ACCOUNT"
+org_id                  = "REPLACE_WITH_ORG_ID"
+central_log_bucket_name = "ai-tos-shared-services-logs"
+domain                  = "ai-tos.example.com"
+vpc_cidr                = "10.30.0.0/16"
+public_subnets          = ["10.30.0.0/20", "10.30.16.0/20", "10.30.32.0/20"]
+private_subnets         = ["10.30.64.0/20", "10.30.80.0/20", "10.30.96.0/20"]
+database_subnets        = ["10.30.128.0/20", "10.30.144.0/20", "10.30.160.0/20"]
+one_nat_gateway_per_az  = true    # HA NAT in prod
+single_nat_gateway      = false
+cross_account_external_id = "REPLACE_WITH_EXTERNAL_ID"
+budget_amount           = 3000
+budget_email            = "finops@ai-tos.example.com"

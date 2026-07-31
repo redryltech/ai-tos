@@ -1,0 +1,24 @@
+# Pod Security Standards enforcement (Phase 0B.2).
+# PSA is built into the API server; enforcement is expressed via the namespace labels
+# below (idempotent — same as namespaces.yaml). Apply after the namespaces exist.
+#
+# Tiers:
+#   platform-system / applications / observability / security / staging -> baseline
+#   production                                                  -> restricted
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: production
+  labels:
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/audit: restricted
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: applications
+  labels:
+    pod-security.kubernetes.io/enforce: baseline
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/audit: restricted

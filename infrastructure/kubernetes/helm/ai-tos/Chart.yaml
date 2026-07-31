@@ -1,0 +1,6 @@
+apiVersion: v2
+name: ai-tos
+description: AI-TOS platform chart — web, api, ai-service, and Go workers
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

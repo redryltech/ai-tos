@@ -1,0 +1,2 @@
+-- Phase 0 seed placeholder. No production seed data required for foundation.
+-- Future phases insert reference data (symbols, roles) here.

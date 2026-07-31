@@ -1,0 +1,103 @@
+# Local Phase 0 stack. Build context is the repo root (../../).
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: ai-tos
+      POSTGRES_PASSWORD: ai-tos
+      POSTGRES_DB: ai_tos
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ai-tos"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile.api
+    environment:
+      NODE_ENV: development
+      PORT: "4000"
+      DATABASE_URL: postgresql://ai-tos:ai-tos@postgres:5432/ai_tos
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: dev-insecure-change-me
+      CORS_ORIGIN: http://localhost:3000
+    ports:
+      - "4000:4000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile.web
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:4000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+
+  ai-service:
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile.ai-service
+    ports:
+      - "8000:8000"
+
+  market-worker:
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile.go
+      args:
+        WORKER: market-worker
+    ports:
+      - "4100:4100"
+
+  risk-worker:
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile.go
+      args:
+        WORKER: risk-worker
+    ports:
+      - "4200:4200"
+
+  news-worker:
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile.go
+      args:
+        WORKER: news-worker
+    ports:
+      - "4300:4300"
+
+  scheduler:
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile.go
+      args:
+        WORKER: scheduler
+    ports:
+      - "4400:4400"
+
+volumes:
+  pgdata:

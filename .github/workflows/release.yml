@@ -1,0 +1,59 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  id-token: write        # OIDC to AWS (ECR push) — ADR-0011
+  issues: write
+  pull-requests: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run build
+
+      - name: Configure AWS (OIDC) + ECR login
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+      - uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build & push images (scan + sign in security.yml)
+        env:
+          ECR: ${{ vars.ECR_REGISTRY }}
+        run: |
+          for svc in api web ai-service market-worker risk-worker news-worker scheduler; do
+            case "$svc" in
+              market-worker|risk-worker|news-worker|scheduler)
+                docker build -f infrastructure/docker/Dockerfile.go --build-arg WORKER=$svc -t $ECR/ai-tos/$svc:${GITHUB_SHA::8} .
+                ;;
+              *)
+                docker build -f infrastructure/docker/Dockerfile.$svc -t $ECR/ai-tos/$svc:${GITHUB_SHA::8} .
+                ;;
+            esac
+            docker push $ECR/ai-tos/$svc:${GITHUB_SHA::8}
+          done
+
+      - name: Semantic Release
+        uses: cycjimmy/semantic-release-action@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,28 @@
+version: "3"
+tasks:
+  bootstrap:
+    desc: Install deps + lint + typecheck (fresh clone)
+    cmds:
+      - pnpm install
+      - pnpm run lint
+      - pnpm run typecheck
+  build:
+    desc: Build all workspaces
+    cmds:
+      - turbo run build
+  dev:
+    desc: Start all services via Docker Compose
+    cmds:
+      - docker compose -f infrastructure/docker/docker-compose.yml up --build
+  test:
+    cmds:
+      - turbo run test
+  lint:
+    cmds:
+      - turbo run lint
+  typecheck:
+    cmds:
+      - turbo run typecheck
+  db:migrate:
+    cmds:
+      - pnpm --filter @ai-tos/database run migrate
