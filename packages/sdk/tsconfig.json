@@ -6,7 +6,8 @@
     "module": "CommonJS",
     "moduleResolution": "Node",
     "types": ["node"],
-    "declaration": true
+    "declaration": true,
+    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo"
   },
   "include": ["src"]
 }

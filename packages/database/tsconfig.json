@@ -5,7 +5,9 @@
     "outDir": "dist",
     "module": "CommonJS",
     "moduleResolution": "Node",
-    "types": ["node"]
+    "types": ["node"],
+    "declaration": true,
+    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo"
   },
   "include": ["src"]
 }
