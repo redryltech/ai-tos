@@ -11,7 +11,7 @@
 | Field | Value |
 |---|---|
 | Status | ⬜ Not started |
-| Depends on | ✅ Phase 0 (0A–0B.9) |
+| Depends on | ✅ Phase 0 / Foundation 0B **COMPLETE** (0A–0B.10) |
 | Stop policy | **Stop after Phase 1** — do not start Phase 2 |
 
 ---
@@ -46,17 +46,17 @@ pnpm lint
 
 ---
 
-## Prior Phase (0B.9) — Complete
+## Prior Phase (0B.10) — Complete
 
-- [x] Disaster Recovery automation / verification scripts
-- [x] Scheduled backup validation workflow
-- [x] Platform maintenance automation
-- [x] Production operational documentation
-- [x] **STOPPED** after 0B.9 (0B.10 not started)
+- [x] Production readiness checklist
+- [x] Final validation report
+- [x] Foundation (Phase 0B) marked complete
+- [x] **STOPPED** — Phase 1 not started
 
 ---
 
 ## References
 
-- [`ROADMAP.md`](./ROADMAP.md)
+- [`PRODUCTION_READINESS.md`](./PRODUCTION_READINESS.md)
+- [`VALIDATION_REPORT.md`](./VALIDATION_REPORT.md)
 - [`PROJECT_STATUS.md`](./PROJECT_STATUS.md)

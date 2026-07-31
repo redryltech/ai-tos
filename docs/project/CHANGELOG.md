@@ -13,6 +13,22 @@ The format follows [Semantic Versioning](https://semver.org/) (`MAJOR.MINOR.PATC
 
 ---
 
+## [0.10.0] — 2026-07-31
+
+**Milestone:** Final production readiness — Foundation Phase 0B complete.
+
+### Added
+- `docs/project/PRODUCTION_READINESS.md` — final checklist
+- `docs/project/VALIDATION_REPORT.md` — gate verdict PASS
+
+### Changed
+- Marked Phase 0B.10 and Foundation (Phase 0B) complete; NEXT_TASK → Phase 1
+
+### Validation
+- `pnpm build` ✅ · `pnpm typecheck` ✅ · `pnpm lint` ✅
+
+---
+
 ## [0.9.0] — 2026-07-31
 
 **Milestone:** Platform Operations & Disaster Recovery (Phase **0B.9**).
@@ -157,6 +173,7 @@ Delivers the production-grade AI-TOS engineering foundation and cloud platform s
 | `v0.7.0` | Through **0B.7** | CI/CD Production Gates |
 | `v0.8.0` | Through **0B.8** | Resilience, DR & Runbooks |
 | `v0.9.0` | Through **0B.9** | Platform Operations & DR |
+| `v0.10.0` | Through **0B.10** | Foundation complete |
 | `v1.0.0` | Phase **8** GA | Production release target |
 
 ---
