@@ -13,6 +13,23 @@ The format follows [Semantic Versioning](https://semver.org/) (`MAJOR.MINOR.PATC
 
 ---
 
+## [0.9.0] — 2026-07-31
+
+**Milestone:** Platform Operations & Disaster Recovery (Phase **0B.9**).
+
+### Added
+- `scripts/backup-validate.sh` — scheduled backup checks (RDS/Redis/S3)
+- `scripts/dr-verify.sh` — DR retention/CRR verification + restore dry-run
+- `scripts/platform-maintain.sh` — maintenance helpers
+- `.github/workflows/platform-ops.yml` — weekly staging ops automation
+- `docs/runbooks/platform-operations.md`
+- `docs/runbooks/production-operations.md`
+
+### Validation
+- `pnpm build` ✅ · `pnpm typecheck` ✅ · `pnpm lint` ✅
+
+---
+
 ## [0.8.0] — 2026-07-31
 
 **Milestone:** Resilience, DR & Runbooks (Phase **0B.8**).
@@ -139,6 +156,7 @@ Delivers the production-grade AI-TOS engineering foundation and cloud platform s
 | `v0.6.0` | Through **0B.6** | Observability Platform |
 | `v0.7.0` | Through **0B.7** | CI/CD Production Gates |
 | `v0.8.0` | Through **0B.8** | Resilience, DR & Runbooks |
+| `v0.9.0` | Through **0B.9** | Platform Operations & DR |
 | `v1.0.0` | Phase **8** GA | Production release target |
 
 ---

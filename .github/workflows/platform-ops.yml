@@ -1,0 +1,65 @@
+name: Platform Ops
+
+# Phase 0B.9 — scheduled backup validation + DR verification
+on:
+  schedule:
+    - cron: "17 6 * * 1"   # weekly Monday 06:17 UTC
+  workflow_dispatch:
+    inputs:
+      job:
+        description: Job to run
+        required: true
+        default: backup-validate
+        type: choice
+        options: [backup-validate, dr-verify, both]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  backup-validate:
+    if: |
+      github.event_name == 'schedule' ||
+      inputs.job == 'backup-validate' ||
+      inputs.job == 'both'
+    environment: staging
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+      - name: Backup validation
+        env:
+          AWS_REGION: ${{ vars.AWS_REGION }}
+          AI_TOS_ENV: staging
+          AI_TOS_RDS_INSTANCE_ID: ${{ vars.AI_TOS_RDS_INSTANCE_ID }}
+          AI_TOS_REDIS_STATE_ID: ${{ vars.AI_TOS_REDIS_STATE_ID }}
+          AI_TOS_BACKUP_BUCKET: ${{ vars.AI_TOS_BACKUP_BUCKET }}
+        run: bash scripts/backup-validate.sh
+
+  dr-verify:
+    if: |
+      github.event_name == 'schedule' ||
+      inputs.job == 'dr-verify' ||
+      inputs.job == 'both'
+    environment: staging
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+      - name: DR verification
+        env:
+          AWS_REGION: ${{ vars.AWS_REGION }}
+          DR_DRY_RUN: "true"
+          AI_TOS_RDS_INSTANCE_ID: ${{ vars.AI_TOS_RDS_INSTANCE_ID }}
+          TF_STATE_BUCKET: ${{ vars.TF_STATE_BUCKET }}
+          SMOKE_BASE_URL: ${{ vars.SMOKE_BASE_URL }}
+          SMOKE_API_URL: ${{ vars.SMOKE_API_URL }}
+          SMOKE_AI_URL: ${{ vars.SMOKE_AI_URL }}
+        run: bash scripts/dr-verify.sh

@@ -11,8 +11,7 @@
 | Field | Value |
 |---|---|
 | Status | ⬜ Not started |
-| Depends on | ✅ Phase 0 (0A–0B.8) |
-| Version target | `v1.0.0-phase1` / per roadmap |
+| Depends on | ✅ Phase 0 (0A–0B.9) |
 | Stop policy | **Stop after Phase 1** — do not start Phase 2 |
 
 ---
@@ -23,7 +22,7 @@ Wire real identity and deploy core control-plane services: IdP/OIDC, user store 
 
 ---
 
-## Deliverables (roadmap)
+## Deliverables
 
 | # | Item |
 |---|---|
@@ -47,14 +46,13 @@ pnpm lint
 
 ---
 
-## Prior Phase (0B.8) — Complete
+## Prior Phase (0B.9) — Complete
 
-- [x] RPO/RTO runbooks
-- [x] Multi-AZ failure drills (staging)
-- [x] Backup restore verification
-- [x] On-call alert routing + severity taxonomy
-- [x] Phase 0 platform exit criteria
-- [x] **STOPPED** after 0B.8
+- [x] Disaster Recovery automation / verification scripts
+- [x] Scheduled backup validation workflow
+- [x] Platform maintenance automation
+- [x] Production operational documentation
+- [x] **STOPPED** after 0B.9 (0B.10 not started)
 
 ---
 
