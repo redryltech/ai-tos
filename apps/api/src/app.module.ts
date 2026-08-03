@@ -1,8 +1,27 @@
 import { Module } from '@nestjs/common';
+import { ConfigurationModule } from './modules/configuration/configuration.module';
+import { SecretsModule } from './modules/secrets/secrets.module';
 import { HealthModule } from './modules/health/health.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { OrganizationsModule } from './modules/organizations/organizations.module';
+import { RbacModule } from './modules/rbac/rbac.module';
+import { ProfilesModule } from './modules/profiles/profiles.module';
+import { ApiKeysModule } from './modules/api-keys/api-keys.module';
+import { SessionsModule } from './modules/sessions/sessions.module';
+import { AuditLogsModule } from './modules/audit-logs/audit-logs.module';
 
 @Module({
-  imports: [HealthModule, AuthModule],
+  imports: [
+    ConfigurationModule,
+    SecretsModule,
+    HealthModule,
+    AuthModule,
+    OrganizationsModule,
+    RbacModule,
+    ProfilesModule,
+    ApiKeysModule,
+    SessionsModule,
+    AuditLogsModule,
+  ],
 })
 export class AppModule {}

@@ -10,16 +10,16 @@ Living status snapshot. Update this file at the end of every completed phase.
 |---|---|
 | **Project Name** | AI-TOS (AI Trading Operating System) |
 | **Repository URL** | https://github.com/redryltech/ai-tos.git |
-| **Current Version** | `v0.10.0` |
+| **Current Version** | `v0.18.1` (Phase 2.1.2) |
 | **Current Branch** | `main` |
-| **Current Phase** | **0B.10 — Production Readiness** ✅ Complete |
-| **Foundation (Phase 0B)** | ✅ **COMPLETE** |
-| **Completed Phases** | `0A`, `0B.1`–`0B.10` |
-| **Current Sprint** | Ready for Phase 1 |
+| **Current Phase** | **2.1.2 — Secrets Service** ✅ Complete |
+| **Foundation (Phase 0B)** | ✅ COMPLETE |
+| **Identity Platform (Phase 1)** | ✅ COMPLETE |
+| **Completed Phases** | `0A`, `0B`, `1.x`, `2.1.1`, `2.1.2` |
+| **Current Sprint** | Phase 2 AI Gateway — ready for **2.1.3** |
 | **Build Status** | Green |
-| **Last Successful Validation** | Phase 0B.10 — `pnpm build` · `typecheck` · `lint` |
-| **Last Git Tag** | `v0.9.0` (next: `v0.10.0`) |
-| **Next Phase** | **1** — Identity, Auth & Core Services |
+| **Last Successful Validation** | Phase 2.1.2 — `pnpm build` · `typecheck` · `lint` · unit tests |
+| **Next Phase** | **2.1.3** — Provider SDK Contracts |
 
 ---
 
@@ -27,15 +27,16 @@ Living status snapshot. Update this file at the end of every completed phase.
 
 | Phase | Name | Status |
 |---|---|---|
-| 0A–0B.9 | Foundation through ops/DR | ✅ Complete |
-| 0B.10 | Final production readiness | ✅ Complete |
-| **Phase 0B** | **Cloud & platform foundation** | ✅ **COMPLETE** |
-| 1+ | Product phases | ⬜ Not started |
+| Phase 0B | Foundation | ✅ Complete |
+| Phase 1 | Identity Platform | ✅ Complete |
+| 2.1.1 | Configuration Service | ✅ Complete |
+| 2.1.2 | Secrets Service | ✅ Complete |
+| 2.1.3+ | Provider SDK / AI Gateway | ⬜ Not started |
 
 ---
 
 ## Notes
 
-- Readiness: [`PRODUCTION_READINESS.md`](./PRODUCTION_READINESS.md)
-- Report: [`VALIDATION_REPORT.md`](./VALIDATION_REPORT.md)
-- Next: [`NEXT_TASK.md`](./NEXT_TASK.md)
+- Secrets: `SecretsModule` · provider abstraction (env + memory) · rotation · cache · redacted `SecretValue`
+- Manages: JWT secrets, encryption keys, platform API keys, AI provider secrets
+- Next: [`NEXT_TASK.md`](./NEXT_TASK.md) — Phase **2.1.3 not started**

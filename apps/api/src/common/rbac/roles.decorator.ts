@@ -1,7 +1,7 @@
 import { SetMetadata } from '@nestjs/common';
-import type { Role } from '@ai-tos/shared';
+import type { RbacRoleKey } from '@ai-tos/shared';
 
 export const ROLES_KEY = 'roles';
 
-/** `@Roles('admin')` — used with RolesGuard for RBAC. */
-export const Roles = (...roles: Role[]) => SetMetadata(ROLES_KEY, roles);
+/** `@Roles('owner', 'admin')` — used with RolesGuard for org RBAC. */
+export const Roles = (...roles: RbacRoleKey[]) => SetMetadata(ROLES_KEY, roles);

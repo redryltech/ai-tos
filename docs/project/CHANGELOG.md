@@ -9,7 +9,178 @@ The format follows [Semantic Versioning](https://semver.org/) (`MAJOR.MINOR.PATC
 ## [Unreleased]
 
 ### Planned
-- Phase **1** — Identity, Auth & Core Services
+- Phase **2.1.3** — Provider SDK Contracts
+
+---
+
+## [0.18.1] — 2026-08-04
+
+**Milestone:** Phase **2.1.2** Secrets Service.
+
+### Added
+- `SecretsModule` / `SecretsService` with DI
+- Secret provider abstraction (`EnvSecretProvider`, `MemorySecretProvider`)
+- Secure retrieval for JWT, encryption, platform API keys, AI provider secrets
+- Runtime rotation overlay + in-memory TTL cache
+- `SecretValue` redaction (no plaintext in logs/JSON/inspect)
+- Unit tests for redaction, memory store, and SecretsService
+
+### Validation
+- `pnpm build` ✅ · `pnpm typecheck` ✅ · `pnpm lint` ✅ · unit tests ✅
+
+---
+
+## [0.18.0] — 2026-08-04
+
+**Milestone:** Phase **2.1.1** Configuration Service.
+
+### Added
+- Structured `PlatformConfig` sections: app, api, database, redis, ai, security, monitoring
+- Deploy environments: development, testing, staging, production (`APP_ENV`)
+- Nest `ConfigurationModule` + injectable `ConfigService`
+- Staging/production fail-fast for insecure/missing secrets and required URLs
+- Unit tests (`@ai-tos/config`, ConfigService)
+
+### Validation
+- `pnpm build` ✅ · `pnpm typecheck` ✅ · `pnpm lint` ✅ · unit tests ✅
+
+---
+
+## [0.17.1] — 2026-08-03
+
+**Milestone:** Phase 1 stabilization (pre–Phase 2).
+
+### Security
+- Production startup fails if `JWT_SECRET`, `JWT_REFRESH_SECRET`, or `API_KEY_ENCRYPTION_SECRET` use insecure defaults/placeholders (dev/test unchanged)
+
+### Changed
+- Organization privileged APIs authorize via RBAC permissions only (`organization:update` / `organization:delete` / `users:manage`)
+- Documented authz SoT: `organization_members` = membership; `organization_user_roles` = authorization
+
+### Validation
+- `pnpm build` ✅ · `pnpm typecheck` ✅ · `pnpm lint` ✅ · unit tests ✅
+
+---
+
+## [0.17.0] — 2026-08-03
+
+**Milestone:** Phase **1.7** Audit Logs — **Identity Platform (Phase 1) COMPLETE**.
+
+### Added
+- Migration `009_audit_logs.sql` (+ `audit_logs` RBAC permissions)
+- `AuditLogsModule` — filtered/paginated list API
+- Audit write hooks: login/logout/refresh, org CRUD/invite, role assign/revoke, profile update, API key lifecycle, session revoke
+- RBAC: Owner/Admin full org logs; Manager team-scoped; Analyst/Viewer denied
+- Unit tests (audit utils)
+
+### Validation
+- `pnpm build` ✅ · `pnpm typecheck` ✅ · `pnpm lint` ✅
+
+---
+
+## [0.16.0] — 2026-08-03
+
+**Milestone:** Phase **1.6** Session Management.
+
+### Added
+- Migration `008_user_sessions.sql`
+- `SessionsModule` — list active, revoke current/specific, revoke others
+- Auth integration: create on login, rotate on refresh, revoke on logout
+- Optional `x-organization-id` stored on session
+- Self-only ownership; refresh token material never exposed
+- Session util unit tests
+
+### Validation
+- `pnpm build` ✅ · `pnpm typecheck` ✅ · `pnpm lint` ✅
+
+---
+
+## [0.15.0] — 2026-08-03
+
+**Milestone:** Phase **1.5** Secure API Key Management.
+
+### Added
+- Migration `007_api_keys.sql` (org-scoped encrypted keys)
+- `ApiKeysModule` — create/list/get/update/revoke/delete
+- AES-256-GCM encryption via `API_KEY_ENCRYPTION_SECRET`
+- Providers: OpenAI, Gemini, Claude, market data, broker, email, Telegram, webhook, custom
+- RBAC: Owner/Admin only (`@Roles` + `api_keys:manage`)
+- Public responses expose `keyLast4` only; `decryptForInternalUse` for services
+- Crypto / mapper unit tests
+
+### Validation
+- `pnpm build` ✅ · `pnpm typecheck` ✅ · `pnpm lint` ✅
+
+---
+
+## [0.14.0] — 2026-08-03
+
+**Milestone:** Phase **1.4** User Profiles.
+
+### Added
+- Migration `006_user_profiles.sql`
+- `ProfilesModule` — self-only CRUD at `/api/profiles/me`
+- Fields: full name, avatar URL, phone, timezone, language, theme, notification preferences
+- Optional `x-organization-id` header compatibility (profile remains user-owned)
+- Shared `UserProfile` / theme / notification preference types
+- Profile util unit tests
+
+### Validation
+- `pnpm build` ✅ · `pnpm typecheck` ✅ · `pnpm lint` ✅
+
+---
+
+## [0.13.0] — 2026-08-03
+
+**Milestone:** Phase **1.3** RBAC (org-scoped roles & permissions).
+
+### Added
+- Migrations `004_rbac.sql` · `005_rbac_seed.sql` (roles, permissions, mappings, org assignments)
+- Frozen roles: Owner, Admin, Manager, Analyst, Viewer
+- `RbacModule` — list roles/permissions, assign/revoke org roles
+- `@Roles()` · `RolesGuard` · `@RequirePermissions()` · `PermissionGuard`
+- Shared `RbacRoleKey` / resource / action types
+- Policy unit tests (`manage` implies CRUD; assignment rank rules)
+- Org create/accept-invite grants default RBAC roles
+
+### Validation
+- `pnpm build` ✅ · `pnpm typecheck` ✅ · `pnpm lint` ✅
+
+---
+
+## [0.12.0] — 2026-08-03
+
+**Milestone:** Phase **1.2** Organization Management (multi-tenancy).
+
+### Added
+- Migration `003_organizations.sql` (organizations, members, invites)
+- `OrganizationsModule` — CRUD, members list, invite + accept
+- Org membership roles: `owner` / `admin` / `member`
+- Shared `Organization` / `OrgMemberRole` types
+- Slug helpers + unit tests
+
+### Validation
+- `pnpm build` ✅ · `pnpm typecheck` ✅ · `pnpm lint` ✅
+
+---
+
+## [0.11.0] — 2026-07-31
+
+**Milestone:** Phase **1.1** Authentication Foundation.
+
+### Added
+- JWT access + refresh token architecture with rotation and hashed refresh storage
+- Argon2id password hashing (`PasswordService`)
+- `POST /api/auth/login`, `/refresh`, `/logout`
+- Global `JwtAuthGuard` + `@Public()`; cookie or Bearer extraction
+- Secure httpOnly auth cookies; throttler on auth routes
+- Global HTTP exception filter (envelope errors)
+- Migration `002_auth_foundation.sql` (`password_hash`, `refresh_tokens`)
+- Auth config keys in `@ai-tos/config`; shared `AuthUser` / token payload updates
+- Unit tests for password hashing and cookie helpers
+
+### Validation
+- `pnpm build` ✅ · `pnpm typecheck` ✅ · `pnpm lint` ✅
 
 ---
 
