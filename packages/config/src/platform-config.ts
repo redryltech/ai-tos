@@ -52,6 +52,15 @@ export interface FlatEnvConfig {
   OTEL_LOGS_EXPORTER: string;
   METRICS_ENABLED: boolean;
   METRICS_PREFIX: string;
+  HEALTH_TIMEOUT_MS: number;
+  HEALTH_CHECK_DATABASE: boolean;
+  HEALTH_CHECK_REDIS: boolean;
+  HEALTH_CHECK_CACHE: boolean;
+  HEALTH_CHECK_AI_GATEWAY: boolean;
+  HEALTH_CHECK_EVENT_BUS: boolean;
+  REDIS_CACHE_URL: string;
+  EVENT_BUS_URL?: string;
+  HEALTH_READINESS_REQUIRED: string;
 }
 
 export interface AppSectionConfig {
@@ -118,6 +127,44 @@ export interface MonitoringSectionConfig {
   metricsPrefix: string;
 }
 
+export type HealthComponentName =
+  | 'api'
+  | 'database'
+  | 'redis'
+  | 'cache'
+  | 'ai_gateway'
+  | 'event_bus';
+
+export interface HealthSectionConfig {
+  timeoutMs: number;
+  checkDatabase: boolean;
+  checkRedis: boolean;
+  checkCache: boolean;
+  checkAiGateway: boolean;
+  checkEventBus: boolean;
+  redisCacheUrl: string;
+  eventBusUrl?: string;
+  /** Components that must be up for /ready (Kubernetes readiness). */
+  readinessRequired: HealthComponentName[];
+}
+
+/** Parse comma-separated readiness component list. */
+export function parseHealthReadinessRequired(raw: string): HealthComponentName[] {
+  const allowed = new Set<HealthComponentName>([
+    'api',
+    'database',
+    'redis',
+    'cache',
+    'ai_gateway',
+    'event_bus',
+  ]);
+  const parsed = raw
+    .split(',')
+    .map((s) => s.trim().toLowerCase())
+    .filter((s): s is HealthComponentName => allowed.has(s as HealthComponentName));
+  return parsed.length > 0 ? [...new Set(parsed)] : ['api', 'database', 'redis'];
+}
+
 /** Centralized configuration every future AI OS module consumes. */
 export interface PlatformConfig {
   app: AppSectionConfig;
@@ -127,6 +174,7 @@ export interface PlatformConfig {
   ai: AiSectionConfig;
   security: SecuritySectionConfig;
   monitoring: MonitoringSectionConfig;
+  health: HealthSectionConfig;
 }
 
 /**
@@ -209,6 +257,17 @@ export function toPlatformConfig(raw: FlatEnvConfig): PlatformConfig {
       otelLogsExporter: raw.OTEL_LOGS_EXPORTER,
       metricsEnabled: raw.METRICS_ENABLED,
       metricsPrefix: raw.METRICS_PREFIX,
+    },
+    health: {
+      timeoutMs: raw.HEALTH_TIMEOUT_MS,
+      checkDatabase: raw.HEALTH_CHECK_DATABASE,
+      checkRedis: raw.HEALTH_CHECK_REDIS,
+      checkCache: raw.HEALTH_CHECK_CACHE,
+      checkAiGateway: raw.HEALTH_CHECK_AI_GATEWAY,
+      checkEventBus: raw.HEALTH_CHECK_EVENT_BUS,
+      redisCacheUrl: raw.REDIS_CACHE_URL,
+      eventBusUrl: raw.EVENT_BUS_URL,
+      readinessRequired: parseHealthReadinessRequired(raw.HEALTH_READINESS_REQUIRED),
     },
   };
 }

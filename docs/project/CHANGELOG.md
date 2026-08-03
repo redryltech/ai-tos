@@ -9,7 +9,23 @@ The format follows [Semantic Versioning](https://semver.org/) (`MAJOR.MINOR.PATC
 ## [Unreleased]
 
 ### Planned
-- Phase **2.1.5** — Provider SDK Contracts
+- Phase **2.1.6** — Provider SDK Contracts
+
+---
+
+## [0.18.4] — 2026-08-04
+
+**Milestone:** Phase **2.1.5** Health Service.
+
+### Added
+- Enterprise `HealthModule` / `HealthService` with dependency probes
+- Endpoints: `/health`, `/ready`, `/live` (Kubernetes readiness/liveness; excluded from API prefix)
+- Monitors: API, Database, Redis, Cache, AI Gateway, Event Bus
+- Config via `ConfigService` health section (`HEALTH_*`, `REDIS_CACHE_URL`, `EVENT_BUS_URL`)
+- Unit tests for aggregation and HealthService
+
+### Validation
+- `pnpm build` ✅ · `pnpm typecheck` ✅ · `pnpm lint` ✅ · unit tests ✅
 
 ---
 

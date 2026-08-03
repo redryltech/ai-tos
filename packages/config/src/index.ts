@@ -20,6 +20,7 @@ export {
   requiresSecureSecrets,
   toPlatformConfig,
   parseLogTransports,
+  parseHealthReadinessRequired,
   type DeployEnvironment,
   type PlatformConfig,
   type AppSectionConfig,
@@ -29,6 +30,8 @@ export {
   type AiSectionConfig,
   type SecuritySectionConfig,
   type MonitoringSectionConfig,
+  type HealthSectionConfig,
+  type HealthComponentName,
   type LogLevel,
   type LogTransportName,
 } from './platform-config';

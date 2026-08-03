@@ -5,6 +5,7 @@ import {
   type ApiSectionConfig,
   type AppSectionConfig,
   type DatabaseSectionConfig,
+  type HealthSectionConfig,
   type MonitoringSectionConfig,
   type PlatformConfig,
   type RedisSectionConfig,
@@ -54,5 +55,9 @@ export class ConfigService {
 
   get monitoring(): MonitoringSectionConfig {
     return this.platform.monitoring;
+  }
+
+  get health(): HealthSectionConfig {
+    return this.platform.health;
   }
 }

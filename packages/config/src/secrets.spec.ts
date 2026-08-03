@@ -42,6 +42,14 @@ function baseConfig(overrides: Partial<AppConfig> = {}): AppConfig {
     OTEL_LOGS_EXPORTER: 'otlp',
     METRICS_ENABLED: true,
     METRICS_PREFIX: 'ai_tos',
+    HEALTH_TIMEOUT_MS: 2000,
+    HEALTH_CHECK_DATABASE: true,
+    HEALTH_CHECK_REDIS: true,
+    HEALTH_CHECK_CACHE: true,
+    HEALTH_CHECK_AI_GATEWAY: true,
+    HEALTH_CHECK_EVENT_BUS: false,
+    REDIS_CACHE_URL: 'redis://localhost:6379',
+    HEALTH_READINESS_REQUIRED: 'api,database,redis',
     ...overrides,
   };
 }

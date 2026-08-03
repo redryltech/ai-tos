@@ -12,7 +12,9 @@ async function bootstrap() {
   const config = loadConfig();
   const app = await NestFactory.create(AppModule);
 
-  app.setGlobalPrefix('api');
+  app.setGlobalPrefix(config.API_GLOBAL_PREFIX, {
+    exclude: ['health', 'ready', 'live'],
+  });
   app.use(helmet());
   app.use(cookieParser());
   app.enableCors({ origin: config.CORS_ORIGIN, credentials: true });

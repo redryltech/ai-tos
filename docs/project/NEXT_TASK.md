@@ -6,13 +6,13 @@
 
 ## Current Phase
 
-**2.1.5 — Provider SDK Contracts**
+**2.1.6 — Provider SDK Contracts**
 
 | Field | Value |
 |---|---|
 | Status | ⬜ Not started |
-| Depends on | ✅ Phase 2.1.4 Metrics Service |
-| Stop policy | **Stop after Phase 2.1.5** — do not start Phase 2.1.6 |
+| Depends on | ✅ Phase 2.1.5 Health Service |
+| Stop policy | **Stop after Phase 2.1.6** — do not start Phase 2.1.7 |
 
 ---
 
@@ -43,14 +43,14 @@ pnpm lint
 
 ---
 
-## Prior Phase (2.1.4) — Complete
+## Prior Phase (2.1.5) — Complete
 
-- [x] MetricsModule + MetricsService (DI)
-- [x] Request / AI / worker / pipeline / cache / error / CPU / memory metrics
-- [x] Prometheus-ready exposition
-- [x] ConfigService (`METRICS_ENABLED`, `METRICS_PREFIX`)
+- [x] HealthModule + HealthService (DI)
+- [x] `/health` · `/ready` · `/live` (K8s probes)
+- [x] Monitors API, Database, Redis, Cache, AI Gateway, Event Bus
+- [x] ConfigService health section
 - [x] Unit tests
-- [x] **STOPPED** — Phase 2.1.5 not started
+- [x] **STOPPED** — Phase 2.1.6 not started
 
 ---
 

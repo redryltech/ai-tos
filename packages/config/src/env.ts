@@ -72,6 +72,31 @@ const envSchema = z.object({
     .string()
     .regex(/^[a-z][a-z0-9_]*$/, 'METRICS_PREFIX must be snake_case')
     .default('ai_tos'),
+
+  HEALTH_TIMEOUT_MS: z.coerce.number().int().positive().default(2000),
+  HEALTH_CHECK_DATABASE: z
+    .enum(['true', 'false'])
+    .default('true')
+    .transform((v) => v === 'true'),
+  HEALTH_CHECK_REDIS: z
+    .enum(['true', 'false'])
+    .default('true')
+    .transform((v) => v === 'true'),
+  HEALTH_CHECK_CACHE: z
+    .enum(['true', 'false'])
+    .default('true')
+    .transform((v) => v === 'true'),
+  HEALTH_CHECK_AI_GATEWAY: z
+    .enum(['true', 'false'])
+    .default('true')
+    .transform((v) => v === 'true'),
+  HEALTH_CHECK_EVENT_BUS: z
+    .enum(['true', 'false'])
+    .default('false')
+    .transform((v) => v === 'true'),
+  REDIS_CACHE_URL: z.string().url().default('redis://localhost:6379'),
+  EVENT_BUS_URL: z.string().url().optional(),
+  HEALTH_READINESS_REQUIRED: z.string().default('api,database,redis'),
 });
 
 export type AppConfig = z.infer<typeof envSchema>;
