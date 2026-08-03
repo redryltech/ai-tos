@@ -9,7 +9,25 @@ The format follows [Semantic Versioning](https://semver.org/) (`MAJOR.MINOR.PATC
 ## [Unreleased]
 
 ### Planned
-- Phase **2.1.3** — Provider SDK Contracts
+- Phase **2.1.4** — Provider SDK Contracts
+
+---
+
+## [0.18.2] — 2026-08-04
+
+**Milestone:** Phase **2.1.3** Logging Service.
+
+### Added
+- `LoggingModule` / injectable `LoggerService`
+- Structured JSON logs with timestamp, requestId, correlationId, aiRequestId, organizationId, userId, workerId
+- Log levels: debug, info, warn, error (via `ConfigService` / `LOG_LEVEL`)
+- Configurable transports: console + file (`LOG_TRANSPORTS`, `LOG_FILE_PATH`)
+- Deep redaction of secrets, tokens, passwords, API keys
+- AsyncLocalStorage context binding for concurrent request safety
+- Unit tests for redaction and LoggerService
+
+### Validation
+- `pnpm build` ✅ · `pnpm typecheck` ✅ · `pnpm lint` ✅ · unit tests ✅
 
 ---
 

@@ -18,6 +18,7 @@ function baseConfig(overrides: Partial<AppConfig> = {}): AppConfig {
     APP_VERSION: '0.0.0',
     API_GLOBAL_PREFIX: 'api',
     LOG_LEVEL: 'info',
+    LOG_TRANSPORTS: 'console',
     PORT: 4000,
     DATABASE_URL: 'postgresql://ai-tos:ai-tos@localhost:5432/ai_tos',
     REDIS_URL: 'redis://localhost:6379',

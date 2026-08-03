@@ -8,7 +8,7 @@
     "dev": "tsc -p tsconfig.json --watch",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
-    "test": "node --import tsx --test src/modules/auth/password.service.spec.ts src/modules/organizations/org.utils.spec.ts src/modules/rbac/rbac.policy.spec.ts src/modules/profiles/profile.utils.spec.ts src/modules/api-keys/api-key.crypto.spec.ts src/modules/sessions/session.utils.spec.ts src/modules/audit-logs/audit.utils.spec.ts src/modules/configuration/config.service.spec.ts src/modules/secrets/secrets.spec.ts src/modules/secrets/secrets.service.spec.ts"
+    "test": "node --import tsx --test src/modules/auth/password.service.spec.ts src/modules/organizations/org.utils.spec.ts src/modules/rbac/rbac.policy.spec.ts src/modules/profiles/profile.utils.spec.ts src/modules/api-keys/api-key.crypto.spec.ts src/modules/sessions/session.utils.spec.ts src/modules/audit-logs/audit.utils.spec.ts src/modules/configuration/config.service.spec.ts src/modules/secrets/secrets.spec.ts src/modules/secrets/secrets.service.spec.ts src/modules/logging/log-redact.spec.ts src/modules/logging/logger.service.spec.ts"
   },
   "dependencies": {
     "@ai-tos/config": "workspace:*",

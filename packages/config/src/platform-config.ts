@@ -13,6 +13,7 @@ export const DeployEnvironmentSchema = [
 export type DeployEnvironment = (typeof DeployEnvironmentSchema)[number];
 
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
+export type LogTransportName = 'console' | 'file';
 export type NodeEnv = 'development' | 'test' | 'production';
 export type CookieSameSite = 'strict' | 'lax' | 'none';
 export type OtelProtocol = 'grpc' | 'http/protobuf' | 'http/json';
@@ -25,6 +26,8 @@ export interface FlatEnvConfig {
   APP_VERSION: string;
   API_GLOBAL_PREFIX: string;
   LOG_LEVEL: LogLevel;
+  LOG_TRANSPORTS: string;
+  LOG_FILE_PATH?: string;
   PORT: number;
   DATABASE_URL: string;
   REDIS_URL: string;
@@ -54,7 +57,19 @@ export interface AppSectionConfig {
   version: string;
   environment: DeployEnvironment;
   logLevel: LogLevel;
+  logTransports: LogTransportName[];
+  logFilePath?: string;
   nodeEnv: NodeEnv;
+}
+
+/** Parse comma-separated LOG_TRANSPORTS into known transport names. */
+export function parseLogTransports(raw: string): LogTransportName[] {
+  const allowed = new Set<LogTransportName>(['console', 'file']);
+  const parsed = raw
+    .split(',')
+    .map((s) => s.trim().toLowerCase())
+    .filter((s): s is LogTransportName => allowed.has(s as LogTransportName));
+  return parsed.length > 0 ? [...new Set(parsed)] : ['console'];
 }
 
 export interface ApiSectionConfig {
@@ -150,6 +165,8 @@ export function toPlatformConfig(raw: FlatEnvConfig): PlatformConfig {
       version: raw.APP_VERSION,
       environment,
       logLevel: raw.LOG_LEVEL,
+      logTransports: parseLogTransports(raw.LOG_TRANSPORTS),
+      logFilePath: raw.LOG_FILE_PATH,
       nodeEnv: raw.NODE_ENV,
     },
     api: {

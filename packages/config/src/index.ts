@@ -19,6 +19,7 @@ export {
   resolveDeployEnvironment,
   requiresSecureSecrets,
   toPlatformConfig,
+  parseLogTransports,
   type DeployEnvironment,
   type PlatformConfig,
   type AppSectionConfig,
@@ -28,4 +29,6 @@ export {
   type AiSectionConfig,
   type SecuritySectionConfig,
   type MonitoringSectionConfig,
+  type LogLevel,
+  type LogTransportName,
 } from './platform-config';

@@ -26,6 +26,10 @@ const envSchema = z.object({
   APP_VERSION: z.string().min(1).default('0.0.0'),
   API_GLOBAL_PREFIX: z.string().default('api'),
   LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
+  /** Comma-separated transports: console,file */
+  LOG_TRANSPORTS: z.string().default('console'),
+  /** Required when `file` is listed in LOG_TRANSPORTS. */
+  LOG_FILE_PATH: z.string().optional(),
   PORT: z.coerce.number().int().positive().default(4000),
 
   DATABASE_URL: z.string().url().default('postgresql://ai-tos:ai-tos@localhost:5432/ai_tos'),

@@ -6,13 +6,13 @@
 
 ## Current Phase
 
-**2.1.3 — Provider SDK Contracts**
+**2.1.4 — Provider SDK Contracts**
 
 | Field | Value |
 |---|---|
 | Status | ⬜ Not started |
-| Depends on | ✅ Phase 2.1.2 Secrets Service |
-| Stop policy | **Stop after Phase 2.1.3** — do not start Phase 2.1.4 |
+| Depends on | ✅ Phase 2.1.3 Logging Service |
+| Stop policy | **Stop after Phase 2.1.4** — do not start Phase 2.1.5 |
 
 ---
 
@@ -43,14 +43,15 @@ pnpm lint
 
 ---
 
-## Prior Phase (2.1.2) — Complete
+## Prior Phase (2.1.3) — Complete
 
-- [x] SecretsModule + SecretsService (DI)
-- [x] Secret provider abstraction (env + memory)
-- [x] JWT / encryption / API / AI provider secret retrieval
-- [x] Rotation + in-memory cache + redaction
+- [x] LoggingModule + LoggerService (DI)
+- [x] Structured JSON logging (debug/info/warn/error)
+- [x] Request / correlation / AI request / org / user / worker IDs
+- [x] Console + file transports; level via ConfigService
+- [x] Secret redaction
 - [x] Unit tests
-- [x] **STOPPED** — Phase 2.1.3 not started
+- [x] **STOPPED** — Phase 2.1.4 not started
 
 ---
 
