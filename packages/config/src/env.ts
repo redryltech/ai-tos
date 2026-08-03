@@ -64,6 +64,14 @@ const envSchema = z.object({
   OTEL_TRACES_EXPORTER: z.string().default('otlp'),
   OTEL_METRICS_EXPORTER: z.string().default('otlp'),
   OTEL_LOGS_EXPORTER: z.string().default('otlp'),
+  METRICS_ENABLED: z
+    .enum(['true', 'false'])
+    .default('true')
+    .transform((v) => v === 'true'),
+  METRICS_PREFIX: z
+    .string()
+    .regex(/^[a-z][a-z0-9_]*$/, 'METRICS_PREFIX must be snake_case')
+    .default('ai_tos'),
 });
 
 export type AppConfig = z.infer<typeof envSchema>;

@@ -50,6 +50,8 @@ export interface FlatEnvConfig {
   OTEL_TRACES_EXPORTER: string;
   OTEL_METRICS_EXPORTER: string;
   OTEL_LOGS_EXPORTER: string;
+  METRICS_ENABLED: boolean;
+  METRICS_PREFIX: string;
 }
 
 export interface AppSectionConfig {
@@ -112,6 +114,8 @@ export interface MonitoringSectionConfig {
   otelTracesExporter: string;
   otelMetricsExporter: string;
   otelLogsExporter: string;
+  metricsEnabled: boolean;
+  metricsPrefix: string;
 }
 
 /** Centralized configuration every future AI OS module consumes. */
@@ -203,6 +207,8 @@ export function toPlatformConfig(raw: FlatEnvConfig): PlatformConfig {
       otelTracesExporter: raw.OTEL_TRACES_EXPORTER,
       otelMetricsExporter: raw.OTEL_METRICS_EXPORTER,
       otelLogsExporter: raw.OTEL_LOGS_EXPORTER,
+      metricsEnabled: raw.METRICS_ENABLED,
+      metricsPrefix: raw.METRICS_PREFIX,
     },
   };
 }

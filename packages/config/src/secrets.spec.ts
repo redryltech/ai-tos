@@ -40,6 +40,8 @@ function baseConfig(overrides: Partial<AppConfig> = {}): AppConfig {
     OTEL_TRACES_EXPORTER: 'otlp',
     OTEL_METRICS_EXPORTER: 'otlp',
     OTEL_LOGS_EXPORTER: 'otlp',
+    METRICS_ENABLED: true,
+    METRICS_PREFIX: 'ai_tos',
     ...overrides,
   };
 }

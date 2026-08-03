@@ -9,7 +9,23 @@ The format follows [Semantic Versioning](https://semver.org/) (`MAJOR.MINOR.PATC
 ## [Unreleased]
 
 ### Planned
-- Phase **2.1.4** — Provider SDK Contracts
+- Phase **2.1.5** — Provider SDK Contracts
+
+---
+
+## [0.18.3] — 2026-08-04
+
+**Milestone:** Phase **2.1.4** Metrics Service.
+
+### Added
+- `MetricsModule` / injectable `MetricsService`
+- Counters/histograms/gauges: requests, durations (HTTP/AI/worker/pipeline), cache hit/miss, errors, CPU, memory
+- Prometheus text exposition (`renderPrometheus`)
+- Config via `ConfigService`: `METRICS_ENABLED`, `METRICS_PREFIX`
+- Unit tests for registry + MetricsService
+
+### Validation
+- `pnpm build` ✅ · `pnpm typecheck` ✅ · `pnpm lint` ✅ · unit tests ✅
 
 ---
 

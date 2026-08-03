@@ -6,13 +6,13 @@
 
 ## Current Phase
 
-**2.1.4 — Provider SDK Contracts**
+**2.1.5 — Provider SDK Contracts**
 
 | Field | Value |
 |---|---|
 | Status | ⬜ Not started |
-| Depends on | ✅ Phase 2.1.3 Logging Service |
-| Stop policy | **Stop after Phase 2.1.4** — do not start Phase 2.1.5 |
+| Depends on | ✅ Phase 2.1.4 Metrics Service |
+| Stop policy | **Stop after Phase 2.1.5** — do not start Phase 2.1.6 |
 
 ---
 
@@ -43,15 +43,14 @@ pnpm lint
 
 ---
 
-## Prior Phase (2.1.3) — Complete
+## Prior Phase (2.1.4) — Complete
 
-- [x] LoggingModule + LoggerService (DI)
-- [x] Structured JSON logging (debug/info/warn/error)
-- [x] Request / correlation / AI request / org / user / worker IDs
-- [x] Console + file transports; level via ConfigService
-- [x] Secret redaction
+- [x] MetricsModule + MetricsService (DI)
+- [x] Request / AI / worker / pipeline / cache / error / CPU / memory metrics
+- [x] Prometheus-ready exposition
+- [x] ConfigService (`METRICS_ENABLED`, `METRICS_PREFIX`)
 - [x] Unit tests
-- [x] **STOPPED** — Phase 2.1.4 not started
+- [x] **STOPPED** — Phase 2.1.5 not started
 
 ---
 

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigurationModule } from './modules/configuration/configuration.module';
 import { SecretsModule } from './modules/secrets/secrets.module';
 import { LoggingModule } from './modules/logging/logging.module';
+import { MetricsModule } from './modules/metrics/metrics.module';
 import { HealthModule } from './modules/health/health.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { OrganizationsModule } from './modules/organizations/organizations.module';
@@ -16,6 +17,7 @@ import { AuditLogsModule } from './modules/audit-logs/audit-logs.module';
     ConfigurationModule,
     SecretsModule,
     LoggingModule,
+    MetricsModule,
     HealthModule,
     AuthModule,
     OrganizationsModule,
