@@ -21,6 +21,7 @@ export {
   toPlatformConfig,
   parseLogTransports,
   parseHealthReadinessRequired,
+  parseCacheDriver,
   type DeployEnvironment,
   type PlatformConfig,
   type AppSectionConfig,
@@ -32,6 +33,8 @@ export {
   type MonitoringSectionConfig,
   type HealthSectionConfig,
   type HealthComponentName,
+  type CacheSectionConfig,
+  type CacheDriver,
   type LogLevel,
   type LogTransportName,
 } from './platform-config';

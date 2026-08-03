@@ -97,6 +97,14 @@ const envSchema = z.object({
   REDIS_CACHE_URL: z.string().url().default('redis://localhost:6379'),
   EVENT_BUS_URL: z.string().url().optional(),
   HEALTH_READINESS_REQUIRED: z.string().default('api,database,redis'),
+
+  CACHE_DRIVER: z.enum(['memory', 'redis']).default('memory'),
+  CACHE_TTL_SECONDS: z.coerce.number().int().nonnegative().default(300),
+  CACHE_NAMESPACE: z
+    .string()
+    .regex(/^[a-z][a-z0-9_:-]*$/i, 'CACHE_NAMESPACE must be a safe key prefix')
+    .default('ai_tos'),
+  CACHE_MAX_MEMORY_ENTRIES: z.coerce.number().int().positive().default(10_000),
 });
 
 export type AppConfig = z.infer<typeof envSchema>;

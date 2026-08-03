@@ -7,6 +7,7 @@ import {
   type DatabaseSectionConfig,
   type HealthSectionConfig,
   type MonitoringSectionConfig,
+  type CacheSectionConfig,
   type PlatformConfig,
   type RedisSectionConfig,
   type SecuritySectionConfig,
@@ -59,5 +60,9 @@ export class ConfigService {
 
   get health(): HealthSectionConfig {
     return this.platform.health;
+  }
+
+  get cache(): CacheSectionConfig {
+    return this.platform.cache;
   }
 }

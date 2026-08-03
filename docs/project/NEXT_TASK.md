@@ -6,13 +6,13 @@
 
 ## Current Phase
 
-**2.1.6 — Provider SDK Contracts**
+**2.1.7 — Provider SDK Contracts**
 
 | Field | Value |
 |---|---|
 | Status | ⬜ Not started |
-| Depends on | ✅ Phase 2.1.5 Health Service |
-| Stop policy | **Stop after Phase 2.1.6** — do not start Phase 2.1.7 |
+| Depends on | ✅ Phase 2.1.6 Cache Service |
+| Stop policy | **Stop after Phase 2.1.7** — do not start Phase 2.1.8 |
 
 ---
 
@@ -43,14 +43,14 @@ pnpm lint
 
 ---
 
-## Prior Phase (2.1.5) — Complete
+## Prior Phase (2.1.6) — Complete
 
-- [x] HealthModule + HealthService (DI)
-- [x] `/health` · `/ready` · `/live` (K8s probes)
-- [x] Monitors API, Database, Redis, Cache, AI Gateway, Event Bus
-- [x] ConfigService health section
+- [x] CacheModule + CacheService (DI)
+- [x] Memory + Redis stores · TTL · namespaces · invalidation · stats
+- [x] Generic CacheStore interface
+- [x] ConfigService cache section
 - [x] Unit tests
-- [x] **STOPPED** — Phase 2.1.6 not started
+- [x] **STOPPED** — Phase 2.1.7 not started
 
 ---
 

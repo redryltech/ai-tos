@@ -50,6 +50,10 @@ function baseConfig(overrides: Partial<AppConfig> = {}): AppConfig {
     HEALTH_CHECK_EVENT_BUS: false,
     REDIS_CACHE_URL: 'redis://localhost:6379',
     HEALTH_READINESS_REQUIRED: 'api,database,redis',
+    CACHE_DRIVER: 'memory',
+    CACHE_TTL_SECONDS: 300,
+    CACHE_NAMESPACE: 'ai_tos',
+    CACHE_MAX_MEMORY_ENTRIES: 10_000,
     ...overrides,
   };
 }

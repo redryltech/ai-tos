@@ -9,7 +9,23 @@ The format follows [Semantic Versioning](https://semver.org/) (`MAJOR.MINOR.PATC
 ## [Unreleased]
 
 ### Planned
-- Phase **2.1.6** — Provider SDK Contracts
+- Phase **2.1.7** — Provider SDK Contracts
+
+---
+
+## [0.18.5] — 2026-08-04
+
+**Milestone:** Phase **2.1.6** Cache Service.
+
+### Added
+- `CacheModule` / injectable `CacheService`
+- Generic `CacheStore` with memory and Redis backends
+- TTL, namespaces, invalidation, hit/miss statistics, `getOrSet`
+- Config via `ConfigService`: `CACHE_DRIVER`, `CACHE_TTL_SECONDS`, `CACHE_NAMESPACE`, `CACHE_MAX_MEMORY_ENTRIES`, `REDIS_CACHE_URL`
+- Unit tests for memory store and CacheService
+
+### Validation
+- `pnpm build` ✅ · `pnpm typecheck` ✅ · `pnpm lint` ✅ · unit tests ✅
 
 ---
 

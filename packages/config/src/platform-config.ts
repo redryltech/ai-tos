@@ -61,6 +61,10 @@ export interface FlatEnvConfig {
   REDIS_CACHE_URL: string;
   EVENT_BUS_URL?: string;
   HEALTH_READINESS_REQUIRED: string;
+  CACHE_DRIVER: string;
+  CACHE_TTL_SECONDS: number;
+  CACHE_NAMESPACE: string;
+  CACHE_MAX_MEMORY_ENTRIES: number;
 }
 
 export interface AppSectionConfig {
@@ -148,6 +152,21 @@ export interface HealthSectionConfig {
   readinessRequired: HealthComponentName[];
 }
 
+export type CacheDriver = 'memory' | 'redis';
+
+export interface CacheSectionConfig {
+  driver: CacheDriver;
+  defaultTtlSeconds: number;
+  namespace: string;
+  redisUrl: string;
+  maxMemoryEntries: number;
+}
+
+export function parseCacheDriver(raw: string): CacheDriver {
+  const v = raw.trim().toLowerCase();
+  return v === 'redis' ? 'redis' : 'memory';
+}
+
 /** Parse comma-separated readiness component list. */
 export function parseHealthReadinessRequired(raw: string): HealthComponentName[] {
   const allowed = new Set<HealthComponentName>([
@@ -175,6 +194,7 @@ export interface PlatformConfig {
   security: SecuritySectionConfig;
   monitoring: MonitoringSectionConfig;
   health: HealthSectionConfig;
+  cache: CacheSectionConfig;
 }
 
 /**
@@ -268,6 +288,13 @@ export function toPlatformConfig(raw: FlatEnvConfig): PlatformConfig {
       redisCacheUrl: raw.REDIS_CACHE_URL,
       eventBusUrl: raw.EVENT_BUS_URL,
       readinessRequired: parseHealthReadinessRequired(raw.HEALTH_READINESS_REQUIRED),
+    },
+    cache: {
+      driver: parseCacheDriver(raw.CACHE_DRIVER),
+      defaultTtlSeconds: raw.CACHE_TTL_SECONDS,
+      namespace: raw.CACHE_NAMESPACE,
+      redisUrl: raw.REDIS_CACHE_URL,
+      maxMemoryEntries: raw.CACHE_MAX_MEMORY_ENTRIES,
     },
   };
 }

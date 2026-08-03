@@ -4,6 +4,7 @@ import { SecretsModule } from './modules/secrets/secrets.module';
 import { LoggingModule } from './modules/logging/logging.module';
 import { MetricsModule } from './modules/metrics/metrics.module';
 import { HealthModule } from './modules/health/health.module';
+import { CacheModule } from './modules/cache/cache.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { OrganizationsModule } from './modules/organizations/organizations.module';
 import { RbacModule } from './modules/rbac/rbac.module';
@@ -19,6 +20,7 @@ import { AuditLogsModule } from './modules/audit-logs/audit-logs.module';
     LoggingModule,
     MetricsModule,
     HealthModule,
+    CacheModule,
     AuthModule,
     OrganizationsModule,
     RbacModule,
