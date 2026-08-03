@@ -54,6 +54,10 @@ function baseConfig(overrides: Partial<AppConfig> = {}): AppConfig {
     CACHE_TTL_SECONDS: 300,
     CACHE_NAMESPACE: 'ai_tos',
     CACHE_MAX_MEMORY_ENTRIES: 10_000,
+    EVENT_BUS_ENABLED: true,
+    EVENT_BUS_DRIVER: 'memory',
+    EVENT_BUS_MAX_LISTENERS: 100,
+    EVENT_BUS_DISPATCH: 'parallel',
     ...overrides,
   };
 }

@@ -105,6 +105,14 @@ const envSchema = z.object({
     .regex(/^[a-z][a-z0-9_:-]*$/i, 'CACHE_NAMESPACE must be a safe key prefix')
     .default('ai_tos'),
   CACHE_MAX_MEMORY_ENTRIES: z.coerce.number().int().positive().default(10_000),
+
+  EVENT_BUS_ENABLED: z
+    .enum(['true', 'false'])
+    .default('true')
+    .transform((v) => v === 'true'),
+  EVENT_BUS_DRIVER: z.enum(['memory']).default('memory'),
+  EVENT_BUS_MAX_LISTENERS: z.coerce.number().int().positive().default(100),
+  EVENT_BUS_DISPATCH: z.enum(['parallel', 'sequential']).default('parallel'),
 });
 
 export type AppConfig = z.infer<typeof envSchema>;

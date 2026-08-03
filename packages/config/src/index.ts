@@ -22,6 +22,8 @@ export {
   parseLogTransports,
   parseHealthReadinessRequired,
   parseCacheDriver,
+  parseEventBusDriver,
+  parseEventBusDispatch,
   type DeployEnvironment,
   type PlatformConfig,
   type AppSectionConfig,
@@ -35,6 +37,9 @@ export {
   type HealthComponentName,
   type CacheSectionConfig,
   type CacheDriver,
+  type EventBusSectionConfig,
+  type EventBusDriver,
+  type EventBusDispatch,
   type LogLevel,
   type LogTransportName,
 } from './platform-config';

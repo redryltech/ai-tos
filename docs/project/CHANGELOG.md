@@ -9,7 +9,24 @@ The format follows [Semantic Versioning](https://semver.org/) (`MAJOR.MINOR.PATC
 ## [Unreleased]
 
 ### Planned
-- Phase **2.1.7** — Provider SDK Contracts
+- Phase **2.1.8** — Provider SDK Contracts
+
+---
+
+## [0.18.6] — 2026-08-04
+
+**Milestone:** Phase **2.1.7** Event Bus · **AI OS Layer 1 complete**.
+
+### Added
+- `EventBusModule` / injectable `EventBusService`
+- Publish, subscribe, unsubscribe, async dispatch, typed `AiOsEvent`
+- Topic routing (`*` / `#` wildcards) for Kernel / Cognitive / AI / Execution / Workers
+- In-memory transport with `EventBusTransport` abstraction (future Kafka/Redis via `EVENT_BUS_URL`)
+- Config via `ConfigService`: `EVENT_BUS_ENABLED`, `EVENT_BUS_DRIVER`, `EVENT_BUS_MAX_LISTENERS`, `EVENT_BUS_DISPATCH`
+- Unit tests for routing and EventBusService
+
+### Validation
+- `pnpm build` ✅ · `pnpm typecheck` ✅ · `pnpm lint` ✅ · unit tests ✅
 
 ---
 

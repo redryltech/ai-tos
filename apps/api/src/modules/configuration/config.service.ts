@@ -8,6 +8,7 @@ import {
   type HealthSectionConfig,
   type MonitoringSectionConfig,
   type CacheSectionConfig,
+  type EventBusSectionConfig,
   type PlatformConfig,
   type RedisSectionConfig,
   type SecuritySectionConfig,
@@ -64,5 +65,9 @@ export class ConfigService {
 
   get cache(): CacheSectionConfig {
     return this.platform.cache;
+  }
+
+  get eventBus(): EventBusSectionConfig {
+    return this.platform.eventBus;
   }
 }

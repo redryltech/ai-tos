@@ -5,6 +5,7 @@ import { LoggingModule } from './modules/logging/logging.module';
 import { MetricsModule } from './modules/metrics/metrics.module';
 import { HealthModule } from './modules/health/health.module';
 import { CacheModule } from './modules/cache/cache.module';
+import { EventBusModule } from './modules/event-bus/event-bus.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { OrganizationsModule } from './modules/organizations/organizations.module';
 import { RbacModule } from './modules/rbac/rbac.module';
@@ -21,6 +22,7 @@ import { AuditLogsModule } from './modules/audit-logs/audit-logs.module';
     MetricsModule,
     HealthModule,
     CacheModule,
+    EventBusModule,
     AuthModule,
     OrganizationsModule,
     RbacModule,

@@ -6,13 +6,13 @@
 
 ## Current Phase
 
-**2.1.7 — Provider SDK Contracts**
+**2.1.8 — Provider SDK Contracts**
 
 | Field | Value |
 |---|---|
 | Status | ⬜ Not started |
-| Depends on | ✅ Phase 2.1.6 Cache Service |
-| Stop policy | **Stop after Phase 2.1.7** — do not start Phase 2.1.8 |
+| Depends on | ✅ Phase 2.1.7 Event Bus · ✅ **Layer 1 complete** |
+| Stop policy | **Stop after Phase 2.1.8** — do not start Phase 2.1.9 |
 
 ---
 
@@ -43,14 +43,15 @@ pnpm lint
 
 ---
 
-## Prior Phase (2.1.6) — Complete
+## Prior Phase (2.1.7) — Complete
 
-- [x] CacheModule + CacheService (DI)
-- [x] Memory + Redis stores · TTL · namespaces · invalidation · stats
-- [x] Generic CacheStore interface
-- [x] ConfigService cache section
+- [x] EventBusModule + EventBusService (DI)
+- [x] Publish / subscribe / unsubscribe
+- [x] Async + typed events + topic routing
+- [x] ConfigService event bus section
 - [x] Unit tests
-- [x] **STOPPED** — Phase 2.1.7 not started
+- [x] **Layer 1 (2.1.1–2.1.7) COMPLETE**
+- [x] **STOPPED** — Phase 2.1.8 not started
 
 ---
 

@@ -65,6 +65,10 @@ export interface FlatEnvConfig {
   CACHE_TTL_SECONDS: number;
   CACHE_NAMESPACE: string;
   CACHE_MAX_MEMORY_ENTRIES: number;
+  EVENT_BUS_ENABLED: boolean;
+  EVENT_BUS_DRIVER: string;
+  EVENT_BUS_MAX_LISTENERS: number;
+  EVENT_BUS_DISPATCH: string;
 }
 
 export interface AppSectionConfig {
@@ -167,6 +171,27 @@ export function parseCacheDriver(raw: string): CacheDriver {
   return v === 'redis' ? 'redis' : 'memory';
 }
 
+export type EventBusDriver = 'memory';
+export type EventBusDispatch = 'parallel' | 'sequential';
+
+export interface EventBusSectionConfig {
+  enabled: boolean;
+  driver: EventBusDriver;
+  /** Optional external bus URL for future Kafka/Redis transports. */
+  url?: string;
+  maxListenersPerTopic: number;
+  dispatch: EventBusDispatch;
+}
+
+export function parseEventBusDriver(raw: string): EventBusDriver {
+  void raw;
+  return 'memory';
+}
+
+export function parseEventBusDispatch(raw: string): EventBusDispatch {
+  return raw.trim().toLowerCase() === 'sequential' ? 'sequential' : 'parallel';
+}
+
 /** Parse comma-separated readiness component list. */
 export function parseHealthReadinessRequired(raw: string): HealthComponentName[] {
   const allowed = new Set<HealthComponentName>([
@@ -195,6 +220,7 @@ export interface PlatformConfig {
   monitoring: MonitoringSectionConfig;
   health: HealthSectionConfig;
   cache: CacheSectionConfig;
+  eventBus: EventBusSectionConfig;
 }
 
 /**
@@ -295,6 +321,13 @@ export function toPlatformConfig(raw: FlatEnvConfig): PlatformConfig {
       namespace: raw.CACHE_NAMESPACE,
       redisUrl: raw.REDIS_CACHE_URL,
       maxMemoryEntries: raw.CACHE_MAX_MEMORY_ENTRIES,
+    },
+    eventBus: {
+      enabled: raw.EVENT_BUS_ENABLED,
+      driver: parseEventBusDriver(raw.EVENT_BUS_DRIVER),
+      url: raw.EVENT_BUS_URL,
+      maxListenersPerTopic: raw.EVENT_BUS_MAX_LISTENERS,
+      dispatch: parseEventBusDispatch(raw.EVENT_BUS_DISPATCH),
     },
   };
 }
