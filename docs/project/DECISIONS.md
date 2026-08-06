@@ -21,7 +21,8 @@ Authoritative detailed records live in [`docs/adrs/`](../adrs/). This file summa
 | D-008 | Kafka (Amazon MSK) | Accepted | 0A / 0B.4 | 2026-07-30 |
 | D-009 | Helm (+ Kustomize + Argo CD) | Accepted | 0A / 0B.5 | 2026-07-30 |
 | D-010 | GitHub Actions | Accepted | 0A | 2026-07-30 |
-| D-011+ | Future decisions | — | — | — |
+| D-011 | AI Kernel ownership model | Accepted | 2.2 | 2026-08-04 |
+| D-012+ | Future decisions | — | — | — |
 
 ---
 
@@ -271,6 +272,38 @@ Use **GitHub Actions** with **OIDC → AWS**, plus SAST, dependency, image, and 
 
 ---
 
+## D-011 — AI Kernel ownership model
+
+| Field | Value |
+|---|---|
+| **Status** | Accepted |
+| **Date** | 2026-08-04 |
+| **Doc** | [`ai-kernel-ownership.md`](../ai-kernel-ownership.md) |
+
+### Context
+Layer 2 exposes six kernel managers with overlapping vocabulary (task state vs execution state vs lifecycle). Layer 3 needs a clear ownership contract to avoid divergent sources of truth.
+
+### Decision
+Document and enforce ownership as follows:
+- Task Scheduler → task scheduling
+- State Manager → execution state
+- Resource Manager → resource allocation
+- Lifecycle Manager → execution lifecycle
+- Communication Manager → internal messaging
+- Context Manager → runtime context  
+
+Callers orchestrate the canonical flow; events are observational only.
+
+### Alternatives considered
+- Merge State and Lifecycle into one manager
+- Make Task Scheduler the sole orchestrator of all managers
+
+### Consequences
+- Architecture doc is authoritative for Layer 3 design.
+- No functional code change in Improvement 2.
+
+---
+
 ## Related Accepted ADRs (reference)
 
 | ADR | Title |
@@ -315,13 +348,13 @@ Use **GitHub Actions** with **OIDC → AWS**, plus SAST, dependency, image, and 
 
 | Topic | Notes |
 |---|---|
-| D-011 | Amazon Managed Prometheus vs self-hosted Prometheus on EKS (0B.6 refinement) |
-| D-012 | Tempo vs AWS X-Ray as primary trace store |
-| D-013 | Paper-trading broker adapter selection |
-| D-014 | Primary LLM provider default + failover policy |
-| D-015 | Multi-region active/active vs active/passive GA topology |
-| D-016 | Tenant isolation model (RLS vs schema-per-tenant) |
-| D-017 | Chaos tooling (Litmus vs Chaos Mesh) |
+| D-012 | Amazon Managed Prometheus vs self-hosted Prometheus on EKS (0B.6 refinement) |
+| D-013 | Tempo vs AWS X-Ray as primary trace store |
+| D-014 | Paper-trading broker adapter selection |
+| D-015 | Primary LLM provider default + failover policy |
+| D-016 | Multi-region active/active vs active/passive GA topology |
+| D-017 | Tenant isolation model (RLS vs schema-per-tenant) |
+| D-018 | Chaos tooling (Litmus vs Chaos Mesh) |
 
 ---
 

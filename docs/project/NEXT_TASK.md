@@ -6,52 +6,31 @@
 
 ## Current Phase
 
-**2.1.8 — Provider SDK Contracts**
+**Layer 5.6 — Execution Finalizer — COMPLETE**
 
 | Field | Value |
 |---|---|
-| Status | ⬜ Not started |
-| Depends on | ✅ Phase 2.1.7 Event Bus · ✅ **Layer 1 complete** |
-| Stop policy | **Stop after Phase 2.1.8** — do not start Phase 2.1.9 |
+| Status | ✅ Layer 5.6 complete |
+| Stop policy | **Execution Layer 5 COMPLETE — do not start next roadmap phase until instructed** |
 
 ---
 
 ## Objective
 
-Common AI provider request/response + error contracts for the AI Gateway (Provider SDK baseline).
+Await explicit instruction for the next roadmap phase beyond Layer 5.
 
 ---
 
-## Deliverables
+## Prior Phase (5.6) — Complete
 
-| # | Item |
-|---|---|
-| 1 | Shared provider SDK contracts |
-| 2 | Request/response types |
-| 3 | Error model |
-| 4 | Adapter interface baseline |
-
----
-
-## Validation
-
-```bash
-pnpm build
-pnpm typecheck
-pnpm lint
-```
-
----
-
-## Prior Phase (2.1.7) — Complete
-
-- [x] EventBusModule + EventBusService (DI)
-- [x] Publish / subscribe / unsubscribe
-- [x] Async + typed events + topic routing
-- [x] ConfigService event bus section
-- [x] Unit tests
-- [x] **Layer 1 (2.1.1–2.1.7) COMPLETE**
-- [x] **STOPPED** — Phase 2.1.8 not started
+- [x] FinalizerModule / ExecutionFinalizerService
+- [x] Finalization Controller · Result Collector · Validator · Composer · Summary · Metadata · Status Resolver · Result Builder
+- [x] Sole public API: `finalize(completedExecution) → ExecutionResult`
+- [x] Finalization only — no execute / retry / stream / workflow/task lifecycle / Layer 4
+- [x] Events `finalization.started` / `completed` / `failed`
+- [x] Config `FINALIZATION_*`
+- [x] Processor and public API unit tests
+- [x] **STOPPED** — no other Layer 5 service modified
 
 ---
 
@@ -59,3 +38,4 @@ pnpm lint
 
 - [`MASTER_ROADMAP.md`](./MASTER_ROADMAP.md)
 - [`PROJECT_STATUS.md`](./PROJECT_STATUS.md)
+- [`AI_BRAIN_ARCHITECTURE.md`](../AI_BRAIN_ARCHITECTURE.md)
