@@ -14,13 +14,7 @@ import { ProfilesModule } from './modules/profiles/profiles.module';
 import { ApiKeysModule } from './modules/api-keys/api-keys.module';
 import { SessionsModule } from './modules/sessions/sessions.module';
 import { AuditLogsModule } from './modules/audit-logs/audit-logs.module';
-import { PerceptionModule } from './modules/perception/perception.module';
-import { ThinkingModule } from './modules/thinking/thinking.module';
-import { DecisionModule } from './modules/decision/decision.module';
-import { PlanningModule } from './modules/planning/planning.module';
-import { OutputModule } from './modules/output/output.module';
-import { MemoryModule } from './modules/memory/memory.module';
-import { KnowledgeModule } from './modules/knowledge/knowledge.module';
+import { CognitiveAdjacentModule } from './boundaries/cognitive-adjacent.module';
 import { CapabilityModule } from './modules/capability/capability.module';
 import { ModelModule } from './modules/model/model.module';
 import { ToolModule } from './modules/tool/tool.module';
@@ -50,13 +44,8 @@ import { FinalizerModule } from './modules/finalizer/finalizer.module';
     ApiKeysModule,
     SessionsModule,
     AuditLogsModule,
-    PerceptionModule,
-    ThinkingModule,
-    DecisionModule,
-    PlanningModule,
-    OutputModule,
-    MemoryModule,
-    KnowledgeModule,
+    /** Product/ATI-adjacent cognitive modules — not SA Platform ownership. */
+    CognitiveAdjacentModule,
     CapabilityModule,
     ModelModule,
     ToolModule,

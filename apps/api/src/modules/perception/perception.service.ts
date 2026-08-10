@@ -25,6 +25,9 @@ import type { WorldUnderstanding } from './models/world-understanding.models';
  * Perception Engine public API (Layer 3.1).
  * Sole public method: perceive(input) → WorldUnderstanding.
  * Never thinks, decides, plans, executes, retrieves memory, or calls AI/workers.
+ *
+ * Boundary: COGNITIVE_PRODUCT_ADJACENT — Persistence ≠ World Model.
+ * Request-scoped understanding only; not Platform Truth ownership.
  */
 @Injectable()
 export class PerceptionService implements IPerceptionService {

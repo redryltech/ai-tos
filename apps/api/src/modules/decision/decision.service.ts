@@ -34,6 +34,9 @@ function isThought(input: Thought | DecideInputDto): input is Thought {
  * Decision Engine public API (Layer 3.3).
  * Sole public method: decide(thought) → Decision.
  * Never reasons, plans, executes, allocates, schedules, or calls workers/providers.
+ *
+ * Boundary: COGNITIVE_PRODUCT_ADJACENT — not SA Platform Decision ownership.
+ * Access (RBAC) ≠ Business Decision. Resource allocation ≠ Business Decision.
  */
 @Injectable()
 export class DecisionService implements IDecisionService {

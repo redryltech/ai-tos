@@ -1,0 +1,83 @@
+# TEMPORARY — migration proof for packages/database 001→010.
+# Does not modify migration SQL. Safe to delete after validation passes on Actions.
+# Trigger: workflow_dispatch (manual) or push/PR touching this workflow / migrations.
+name: Migrate Validate Temp
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "packages/database/migrations/**"
+      - "packages/database/src/scripts/migrate.ts"
+      - ".github/workflows/migrate-validate-temp.yml"
+      - ".github/scripts/migrate-validate-temp.sh"
+  push:
+    paths:
+      - "packages/database/migrations/**"
+      - "packages/database/src/scripts/migrate.ts"
+      - ".github/workflows/migrate-validate-temp.yml"
+      - ".github/scripts/migrate-validate-temp.sh"
+
+permissions:
+  contents: read
+
+jobs:
+  migrate-001-to-010:
+    name: Postgres migrate 001→010
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U test -d postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      # Admin connection (default DB) for CREATE/DROP DATABASE
+      DATABASE_ADMIN_URL: postgresql://test:test@localhost:5432/postgres
+      # Base URL without DB name — script appends disposable DB names
+      DATABASE_BASE_URL: postgresql://test:test@localhost:5432
+      NODE_ENV: development
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Install psql client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - name: Wait for Postgres
+        run: |
+          for i in $(seq 1 30); do
+            if pg_isready -h localhost -p 5432 -U test; then
+              echo "postgres ready"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "postgres not ready"
+          exit 1
+
+      - name: Run migrate validation (fresh + phase0 + idempotent)
+        run: |
+          chmod +x .github/scripts/migrate-validate-temp.sh
+          .github/scripts/migrate-validate-temp.sh

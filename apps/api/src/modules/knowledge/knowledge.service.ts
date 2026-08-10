@@ -23,6 +23,9 @@ import type {
 /**
  * Knowledge Service public API (Layer 4.2).
  * Manages discoverable facts/documents. Never cognizes, embeds, or stores experiences.
+ *
+ * Boundary: COGNITIVE_PRODUCT_ADJACENT — Knowledge ≠ Platform durable representation (SA-007).
+ * Persistence ≠ Truth / Memory / World Model.
  */
 @Injectable()
 export class KnowledgeService implements IKnowledgeService {

@@ -16,7 +16,7 @@
     "lint": "eslint .",
     "migrate": "tsx src/scripts/migrate.ts",
     "seed": "tsx src/scripts/seed.ts",
-    "test": "echo \"no tests\""
+    "test": "node --import tsx --test src/scripts/migration-integrity.spec.ts"
   },
   "dependencies": {
     "@ai-tos/config": "workspace:*",
