@@ -22,6 +22,14 @@ module "eks" {
   cluster_endpoint_public_access  = false
   enable_irsa                     = true
 
+  cluster_enabled_log_types = [
+    "api",
+    "audit",
+    "authenticator",
+    "controllerManager",
+    "scheduler",
+  ]
+
   eks_managed_node_groups = {
     default = {
       instance_types = [var.nodes_instance_type]

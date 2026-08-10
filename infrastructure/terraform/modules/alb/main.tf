@@ -9,8 +9,9 @@ variable "route53_zone_id" { type = string }
 # Ingress 80/443 from the internet is required for that edge; egress is VPC-only to targets.
 # tfsec:ignore:aws-ec2-no-public-ingress-sgr Public ALB edge must accept client HTTP(S) from the internet; :80 redirects to :443.
 resource "aws_security_group" "alb" {
-  name   = "${var.name}-alb-sg"
-  vpc_id = var.vpc_id
+  name        = "${var.name}-alb-sg"
+  description = "AI-TOS ALB security group for ${var.name} (HTTPS edge)"
+  vpc_id      = var.vpc_id
 
   ingress {
     description = "HTTP redirect to HTTPS"
