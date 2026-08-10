@@ -92,10 +92,13 @@ module "secrets" {
 }
 
 module "alb" {
-  source    = "./modules/alb"
-  name      = "${var.project}-${var.environment}"
-  vpc_id    = module.vpc.vpc_id
-  subnet_ids = module.vpc.public_subnets
+  source          = "./modules/alb"
+  name            = "${var.project}-${var.environment}"
+  vpc_id          = module.vpc.vpc_id
+  vpc_cidr        = var.vpc_cidr
+  subnet_ids      = module.vpc.public_subnets
+  domain          = var.domain
+  route53_zone_id = module.route53.zone_id
 }
 
 module "route53" {

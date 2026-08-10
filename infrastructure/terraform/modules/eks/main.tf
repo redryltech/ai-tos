@@ -6,6 +6,9 @@ variable "nodes_instance_type" { type = string }
 variable "nodes_min" { type = number }
 variable "nodes_max" { type = number }
 
+# Private API endpoint only (no public cluster endpoint / 0.0.0.0/0 CIDR).
+# Node SG keeps module recommended rules including NAT egress for ECR/updates.
+# tfsec:ignore:aws-ec2-no-public-egress-sgr Managed nodes egress via NAT for ECR/OS updates; restricting to VPC CIDR without VPC endpoints would break pulls. Endpoints are a follow-up, not disabled scanning.
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 20.0"
@@ -15,15 +18,16 @@ module "eks" {
   vpc_id          = var.vpc_id
   subnet_ids      = var.subnet_ids
 
-  cluster_endpoint_public_access = true
-  enable_irsa                    = true
+  cluster_endpoint_private_access = true
+  cluster_endpoint_public_access  = false
+  enable_irsa                     = true
 
   eks_managed_node_groups = {
     default = {
       instance_types = [var.nodes_instance_type]
-      min_size      = var.nodes_min
-      max_size      = var.nodes_max
-      desired_size  = var.nodes_min
+      min_size       = var.nodes_min
+      max_size       = var.nodes_max
+      desired_size   = var.nodes_min
     }
   }
 }
