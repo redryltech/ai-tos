@@ -20,6 +20,9 @@ import type { MemoryCollection, MemoryRecord } from './models/memory.models';
 /**
  * Memory Service public API (Layer 4.1).
  * Preserves experiences across time. Never cognizes, reasons, or executes models.
+ *
+ * Boundary: COGNITIVE_PRODUCT_ADJACENT — not SA-007 Persistence / Platform Truth.
+ * Persistence ≠ Memory. In-process provider is not a World Model or Decision store.
  */
 @Injectable()
 export class MemoryService implements IMemoryService {

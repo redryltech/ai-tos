@@ -16,7 +16,10 @@ interface InternalSubscription {
 
 /**
  * In-process async event transport with topic routing.
- * Future Kafka/Redis transports can implement EventBusTransport similarly.
+ *
+ * Transport posture: local / development / single-process default.
+ * Not a production broker selection. Durable/distributed transports remain an
+ * open F-010 G-07 implementation decision; Event ≠ Outcome; EventBus ≠ Orchestrator.
  */
 export class MemoryEventBusTransport implements EventBusTransport {
   readonly driver = 'memory';

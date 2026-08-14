@@ -34,6 +34,9 @@ function isDecision(input: Decision | PlanInputDto): input is Decision {
  * Planning Engine public API (Layer 3.4).
  * Sole public method: plan(decision) → ExecutionBlueprint.
  * Never executes, schedules, allocates, decides, reasons, or calls workers/providers.
+ *
+ * Boundary: COGNITIVE_PRODUCT_ADJACENT — Workflow construction ≠ Runtime execution.
+ * Not a Universal Workflow Owner / Platform orchestrator.
  */
 @Injectable()
 export class PlanningService implements IPlanningService {

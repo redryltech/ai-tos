@@ -38,6 +38,8 @@ function isWorldUnderstanding(
  * Thinking Engine public API (Layer 3.2).
  * Sole public method: think(worldUnderstanding) → Thought.
  * Never decides, plans, executes, allocates, schedules, or calls workers/providers.
+ *
+ * Boundary: COGNITIVE_PRODUCT_ADJACENT — not Platform Brain / Universal Intelligence.
  */
 @Injectable()
 export class ThinkingService implements IThinkingService {

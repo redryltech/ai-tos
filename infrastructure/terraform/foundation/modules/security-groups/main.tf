@@ -16,10 +16,11 @@ resource "aws_security_group" "endpoints" {
   }
 
   egress {
+    description = "VPC-local only (endpoint ENIs do not need internet egress)"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [var.vpc_cidr]
   }
 
   tags = merge(var.tags, { Name = "${var.name}-vpc-endpoints" })

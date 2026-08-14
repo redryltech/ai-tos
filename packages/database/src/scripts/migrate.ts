@@ -19,8 +19,15 @@ async function main() {
       const exists = await client.query(`SELECT 1 FROM _migrations WHERE name = $1`, [file]);
       if (exists.rowCount && exists.rowCount > 0) continue;
       const sql = readFileSync(join(MIGRATIONS_DIR, file), 'utf8');
-      await client.query(sql);
-      await client.query(`INSERT INTO _migrations (name) VALUES ($1)`, [file]);
+      await client.query('BEGIN');
+      try {
+        await client.query(sql);
+        await client.query(`INSERT INTO _migrations (name) VALUES ($1)`, [file]);
+        await client.query('COMMIT');
+      } catch (err) {
+        await client.query('ROLLBACK');
+        throw err;
+      }
       console.log(`migrated: ${file}`);
     }
     console.log('migrations complete');

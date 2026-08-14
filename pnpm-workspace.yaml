@@ -1,3 +1,19 @@
 packages:
   - "apps/*"
   - "packages/*"
+
+# Dependency security pins (also mirrored under package.json#pnpm for pnpm 9 CI).
+# Clears high+ transitive findings without disabling audit gates.
+overrides:
+  "eslint": "8.57.1"
+  "nanoid@^3": "3.3.17"
+  "js-yaml": "^4.3.1"
+  "minimatch@^9": "9.0.7"
+  "multer": "^2.2.0"
+  "picomatch@^4": "4.0.4"
+  "lodash": "^4.18.0"
+  "tmp": "^0.2.6"
+  "glob@^10": "10.5.0"
+  "postcss": "^8.5.18"
+  "fast-uri": "^3.1.5"
+  "sharp": "^0.35.0"
