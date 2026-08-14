@@ -1,0 +1,103 @@
+# Controlled platform image import (ADR-0018 Option B).
+# Reuses ADR-0011 OIDC / ECR / Trivy / Syft / Cosign conventions.
+# Digest-pinned allowlist is authoritative; mutable tags are not the security identity.
+#
+# Default (PR / dispatch without push): validate only — no production push.
+# workflow_dispatch with push=true: copy → Trivy → Syft → ECR → Cosign sign/attest.
+# Requires Terraform-applied ecr-platform repositories in the ECR account.
+
+name: Platform Image Import
+
+on:
+  workflow_dispatch:
+    inputs:
+      push:
+        description: "Push signed images to private ECR (requires AWS OIDC + repos)"
+        type: boolean
+        default: false
+      image_id:
+        description: "Optional single allowlist id (empty = all approved)"
+        type: string
+        required: false
+        default: ""
+  pull_request:
+    paths:
+      - "docs/security/platform-image-allowlist.yaml"
+      - "scripts/security/import-platform-images.sh"
+      - ".github/workflows/platform-image-import.yml"
+      - "infrastructure/terraform/foundation/modules/ecr-platform/**"
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Install crane
+        uses: imjasonh/setup-crane@v0.4
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3
+
+      - name: Install Syft
+        uses: anchore/sbom-action/download-syft@v0
+
+      - name: Install Trivy
+        uses: aquasecurity/setup-trivy@v0.2.3
+        with:
+          version: v0.53.0
+          cache: true
+
+      - name: Configure AWS (OIDC) + ECR login
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.push == true }}
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: ECR login
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.push == true }}
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Import / validate allowlisted images
+        env:
+          ECR_REGISTRY: ${{ vars.ECR_REGISTRY }}
+          IMAGE_FILTER: ${{ inputs.image_id || '' }}
+          ALLOWLIST: docs/security/platform-image-allowlist.yaml
+          OUT_DIR: .tools/platform-import
+        run: |
+          chmod +x scripts/security/import-platform-images.sh
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ inputs.push }}" == "true" ]]; then
+            export PUSH=true
+            if [[ -z "${ECR_REGISTRY}" ]]; then
+              echo "ERROR: vars.ECR_REGISTRY required for push" >&2
+              exit 1
+            fi
+          else
+            export PUSH=false
+            export ECR_REGISTRY="${ECR_REGISTRY:-local.invalid}"
+          fi
+          scripts/security/import-platform-images.sh
+
+      - name: Upload import artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: platform-image-import
+          path: .tools/platform-import/
+          if-no-files-found: warn

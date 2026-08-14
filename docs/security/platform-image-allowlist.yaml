@@ -1,0 +1,164 @@
+# AI-TOS platform image allowlist (ADR-0018 — Option B controlled import)
+#
+# Digests resolved 2026-08-12 via crane digest against upstream registries.
+# Digest is the security identity. Tags are human-readable only.
+# Do not invent digests. Do not upgrade versions in the first migration.
+
+schema_version: 1
+policy:
+  digest_authoritative: true
+  naive_retag_prohibited: true
+  pull_through_cache_primary: false
+  blocking_scan_severity: [HIGH, CRITICAL]
+  require_syft_sbom: true
+  require_cosign_sign_attest: true
+  eks_managed_addons_not_overridden:
+    - coredns
+    - kube-proxy
+    - vpc-cni
+    - aws-ebs-csi-driver
+
+images:
+  - id: aws-load-balancer-controller
+    approval_status: approved
+    source:
+      registry: public.ecr.aws
+      repository: eks/aws-load-balancer-controller
+      tag: v3.5.0
+      reference: public.ecr.aws/eks/aws-load-balancer-controller:v3.5.0
+      digest: sha256:298acdff5a571731276aaea3d5cc450a264e4ad710a5bddf3e518f68a3f9f6cb
+    upstream_signature:
+      status: not_verified
+      note: Upstream cosign/signature not verified in this allowlist entry; AI-TOS establishes destination scan/SBOM/sign.
+    destination:
+      ecr_repository: platform/aws-load-balancer-controller
+      immutable_reference: platform/aws-load-balancer-controller@sha256:298acdff5a571731276aaea3d5cc450a264e4ad710a5bddf3e518f68a3f9f6cb
+      human_tag: v3.5.0
+
+  - id: cluster-autoscaler
+    approval_status: approved
+    source:
+      registry: registry.k8s.io
+      repository: autoscaling/cluster-autoscaler
+      tag: v1.29.0
+      reference: registry.k8s.io/autoscaling/cluster-autoscaler:v1.29.0
+      digest: sha256:808185c1090107f06ea69b0a5e507e387ad2ee3a3b12b7cd08ea0dac730cf58b
+    upstream_signature:
+      status: not_verified
+      note: Upstream signature not verified; AI-TOS destination provenance required.
+    destination:
+      ecr_repository: platform/cluster-autoscaler
+      immutable_reference: platform/cluster-autoscaler@sha256:808185c1090107f06ea69b0a5e507e387ad2ee3a3b12b7cd08ea0dac730cf58b
+      human_tag: v1.29.0
+
+  - id: metrics-server
+    approval_status: approved
+    source:
+      registry: registry.k8s.io
+      repository: metrics-server/metrics-server
+      tag: v0.7.1
+      reference: registry.k8s.io/metrics-server/metrics-server:v0.7.1
+      digest: sha256:db3800085a0957083930c3932b17580eec652cfb6156a05c0f79c7543e80d17a
+    upstream_signature:
+      status: not_verified
+      note: Upstream signature not verified; AI-TOS destination provenance required.
+    destination:
+      ecr_repository: platform/metrics-server
+      immutable_reference: platform/metrics-server@sha256:db3800085a0957083930c3932b17580eec652cfb6156a05c0f79c7543e80d17a
+      human_tag: v0.7.1
+
+  - id: grafana
+    approval_status: approved
+    source:
+      registry: docker.io
+      repository: grafana/grafana
+      tag: "10.4.2"
+      reference: docker.io/grafana/grafana:10.4.2
+      digest: sha256:7d5faae481a4c6f436c99e98af11534f7fd5e8d3e35213552dd1dd02bc393d2e
+    upstream_signature:
+      status: not_verified
+      note: Upstream signature not verified; AI-TOS destination provenance required.
+    destination:
+      ecr_repository: observability/grafana
+      immutable_reference: observability/grafana@sha256:7d5faae481a4c6f436c99e98af11534f7fd5e8d3e35213552dd1dd02bc393d2e
+      human_tag: "10.4.2"
+
+  - id: prometheus
+    approval_status: approved
+    source:
+      registry: docker.io
+      repository: prom/prometheus
+      tag: v2.51.2
+      reference: docker.io/prom/prometheus:v2.51.2
+      digest: sha256:4f6c47e39a9064028766e8c95890ed15690c30f00c4ba14e7ce6ae1ded0295b1
+    upstream_signature:
+      status: not_verified
+      note: Upstream signature not verified; AI-TOS destination provenance required.
+    destination:
+      ecr_repository: observability/prometheus
+      immutable_reference: observability/prometheus@sha256:4f6c47e39a9064028766e8c95890ed15690c30f00c4ba14e7ce6ae1ded0295b1
+      human_tag: v2.51.2
+
+  - id: alertmanager
+    approval_status: approved
+    source:
+      registry: docker.io
+      repository: prom/alertmanager
+      tag: v0.27.0
+      reference: docker.io/prom/alertmanager:v0.27.0
+      digest: sha256:e13b6ed5cb929eeaee733479dce55e10eb3bc2e9c4586c705a4e8da41e5eacf5
+    upstream_signature:
+      status: not_verified
+      note: Upstream signature not verified; AI-TOS destination provenance required.
+    destination:
+      ecr_repository: observability/alertmanager
+      immutable_reference: observability/alertmanager@sha256:e13b6ed5cb929eeaee733479dce55e10eb3bc2e9c4586c705a4e8da41e5eacf5
+      human_tag: v0.27.0
+
+  - id: loki
+    approval_status: approved
+    source:
+      registry: docker.io
+      repository: grafana/loki
+      tag: "2.9.8"
+      reference: docker.io/grafana/loki:2.9.8
+      digest: sha256:8b5bd7748d0e4da66cd741ac276e485517514af0bea32167e27c0e1a95bcf8aa
+    upstream_signature:
+      status: not_verified
+      note: Upstream signature not verified; AI-TOS destination provenance required.
+    destination:
+      ecr_repository: observability/loki
+      immutable_reference: observability/loki@sha256:8b5bd7748d0e4da66cd741ac276e485517514af0bea32167e27c0e1a95bcf8aa
+      human_tag: "2.9.8"
+
+  - id: tempo
+    approval_status: approved
+    source:
+      registry: docker.io
+      repository: grafana/tempo
+      tag: "2.4.1"
+      reference: docker.io/grafana/tempo:2.4.1
+      digest: sha256:5b9c08f6d8fb43b3b72dfd1252ba4f198b11a245257bf76ee2ca13e243bac565
+    upstream_signature:
+      status: not_verified
+      note: Upstream signature not verified; AI-TOS destination provenance required.
+    destination:
+      ecr_repository: observability/tempo
+      immutable_reference: observability/tempo@sha256:5b9c08f6d8fb43b3b72dfd1252ba4f198b11a245257bf76ee2ca13e243bac565
+      human_tag: "2.4.1"
+
+  - id: opentelemetry-collector
+    approval_status: approved
+    source:
+      registry: docker.io
+      repository: otel/opentelemetry-collector-contrib
+      tag: "0.96.0"
+      reference: docker.io/otel/opentelemetry-collector-contrib:0.96.0
+      digest: sha256:7ef2a2ff46b9e432321fdd63df104bfeedaf7b4e276950f42c634d0f23521fc4
+    upstream_signature:
+      status: not_verified
+      note: Upstream signature not verified; AI-TOS destination provenance required.
+    destination:
+      ecr_repository: observability/opentelemetry-collector
+      immutable_reference: observability/opentelemetry-collector@sha256:7ef2a2ff46b9e432321fdd63df104bfeedaf7b4e276950f42c634d0f23521fc4
+      human_tag: "0.96.0"
