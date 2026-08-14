@@ -35,5 +35,8 @@
     "overrides": {
       "eslint": "^8.57.1"
     }
+  },
+  "dependencies": {
+    "js-yaml": "^4.3.1"
   }
 }
